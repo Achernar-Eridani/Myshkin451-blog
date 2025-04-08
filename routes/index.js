@@ -3,12 +3,12 @@ const router = express.Router();
 const userRoutes = require('./userRoutes');
 const postRoutes = require('./postRoutes');
 const categoryRoutes = require('./categoryRoutes');
-
+const tagRoutes = require('./tagRoutes');
 
 router.use('/users', userRoutes);
 router.use('/posts', postRoutes);
 router.use('/categories', categoryRoutes);
-
+route.use('/tag', tagRoutes);
 
 // API首页
 router.get('/', (req, res) => {
