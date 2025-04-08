@@ -11,5 +11,6 @@ router.get('/:id', postController.getPostById);
 router.post('/', protect, postController.createPost);
 router.put('/:id', protect, postController.updatePost);
 router.delete('/:id', protect, postController.deletePost);
+router.put('/:id/tags', protect, postController.managePostTags);
 
 module.exports = router;

@@ -8,7 +8,7 @@ const tagRoutes = require('./tagRoutes');
 router.use('/users', userRoutes);
 router.use('/posts', postRoutes);
 router.use('/categories', categoryRoutes);
-route.use('/tag', tagRoutes);
+router.use('/tags', tagRoutes);
 
 // API首页
 router.get('/', (req, res) => {
