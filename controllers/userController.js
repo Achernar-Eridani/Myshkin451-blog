@@ -47,3 +47,42 @@ try {
 }
 };
 
+// 用户登录
+exports.login = async (req, res) => {
+    try {
+    const { email, password } = req.body;
+    
+    // 查找用户
+    const user = await User.findOne({ where: { email } });
+    
+    if (!user) {
+        return res.status(404).json({ message: '用户不存在' });
+    }
+    
+    // 验证密码
+    const isPasswordValid = await user.validatePassword(password);
+    
+    if (!isPasswordValid) {
+        return res.status(401).json({ message: '密码错误' });
+    }
+    
+    // 生成JWT令牌
+    const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn: '1d' }
+    );
+    
+    res.json({
+        message: '登录成功',
+        token,
+        user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+        }
+    });
+    } catch (error) {
+    res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+};  
