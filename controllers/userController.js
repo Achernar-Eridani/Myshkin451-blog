@@ -1,21 +1,19 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken'); // 需要安装：npm install jsonwebtoken
+const jwt = require('jsonwebtoken'); 
 
 // 注册新用户
 exports.register = async (req, res) => {
 try {
     const { username, email, password } = req.body;
     
-    // 检查用户名或邮箱是否已存在
-    const userExists = await User.findOne({ 
-    where: {
-        [sequelize.Op.or]: [{ username }, { email }]
-    } 
-    });
-    
-    if (userExists) {
-    return res.status(400).json({ message: '用户名或邮箱已被使用' });
+    // 检查用户名是否已存在
+    const usernameExists = await User.findOne({ where: { username } });
+    // 检查邮箱是否已存在 
+    const emailExists = await User.findOne({ where: { email } });
+
+    if (usernameExists || emailExists) {
+        return res.status(400).json({ message: '用户名或邮箱已被使用' });
     }
     
     // 创建新用户
