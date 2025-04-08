@@ -103,8 +103,19 @@ hooks: {
         post.slug += '-' + Math.floor(Math.random() * 1000000).toString();
     }
     }
+},
+
+categoryId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+    model: 'categories',
+    key: 'id'
+    }
 }
 });
+
+
 
 // 导出Post模型，以便其他文件使用
 module.exports = Post;
