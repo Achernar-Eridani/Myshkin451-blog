@@ -3,7 +3,8 @@ const sequelize = require('../config/database');
 const User = require('./User');
 const Post = require('./Post');
 const Category = require('./Category');
-
+const Tag = require('./Tag');
+const PostTag = require('./PostTag');
 // 定义模型之间的关联关系
 
 // 用户与文章的关系：一对多
@@ -31,6 +32,20 @@ Post.belongsTo(Category, {
     as: 'category'
 });
 
+Post.belongsToMany(Tag, {
+    through: PostTag,
+    foreignKey: 'postId',
+    otherKey: 'tagId',
+    as: 'tags'
+});
+
+Tag.belongsToMany(Post, {
+    through: PostTag,
+    foreignKey: 'tagId',
+    otherKey: 'postId',
+    as: 'posts'
+});
+
 // 同步数据库模型（在开发环境中）
 const syncDatabase = async () => {
 try {
@@ -50,5 +65,7 @@ module.exports = {
     User,
     Post,
     Category,
+    Tag,
+    PostTag,
     syncDatabase
 };
