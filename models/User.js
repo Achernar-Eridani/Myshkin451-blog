@@ -44,7 +44,8 @@ const User = sequelize.define('User', {
     // 定义avatar字段：字符串类型，允许为空
     avatar: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
+        defaultValue: '/uploads/avatars/default.png'
     },
 
     // 定义bio字段：文本类型，允许为空

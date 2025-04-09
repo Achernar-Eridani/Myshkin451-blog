@@ -66,6 +66,11 @@ const Post = sequelize.define('Post', {
             model: 'users', // 引用的表名
             key: 'id'       // 引用的字段
         }
+    },
+
+    coverImage: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     // 表名设置为'posts'
