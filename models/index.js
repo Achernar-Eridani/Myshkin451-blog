@@ -5,6 +5,8 @@ const Post = require('./Post');
 const Category = require('./Category');
 const Tag = require('./Tag');
 const PostTag = require('./PostTag');
+const Comment = require('./Comment');
+
 
 // 定义模型之间的关联关系
 
@@ -47,6 +49,38 @@ Tag.belongsToMany(Post, {
     as: 'posts'
 });
 
+User.hasMany(Comment, {
+    foreignKey: 'userId',
+    as: 'comments'
+});
+
+Comment.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user'
+});
+
+  // 文章与评论: 一对多
+Post.hasMany(Comment, {
+    foreignKey: 'postId',
+    as: 'comments'
+});
+
+Comment.belongsTo(Post, {
+    foreignKey: 'postId',
+    as: 'post'
+});
+
+// 评论自关联（嵌套评论）
+Comment.hasMany(Comment, {
+    foreignKey: 'parentId',
+    as: 'replies'
+});
+
+Comment.belongsTo(Comment, {
+    foreignKey: 'parentId',
+    as: 'parent'
+});
+
 // 同步数据库模型（在开发环境中）
 const syncDatabase = async () => {
     try {
@@ -67,5 +101,6 @@ module.exports = {
     Category,
     Tag,
     PostTag,
+    Comment,
     syncDatabase
 };
