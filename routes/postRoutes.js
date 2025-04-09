@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
+const commentController = require('../controllers/commentController');
 const { protect } = require('../middlewares/authMiddleware');
 
 // 公开路由
@@ -12,5 +13,7 @@ router.post('/', protect, postController.createPost);
 router.put('/:id', protect, postController.updatePost);
 router.delete('/:id', protect, postController.deletePost);
 router.put('/:id/tags', protect, postController.managePostTags);
+router.get('/:postId/comments', commentController.getPostComments);
+router.post('/:postId/comments', protect, commentController.createComment);
 
 module.exports = router;
