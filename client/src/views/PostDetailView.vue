@@ -157,8 +157,7 @@
     try {
       const postId = route.params.id;
       
-      // 需要先扩展api服务添加getPostById方法
-      // 假设已经按照之前建议扩展了api
+
       post.value = await api.getPostById(postId);
       
       console.log('获取到的文章详情:', post.value);
