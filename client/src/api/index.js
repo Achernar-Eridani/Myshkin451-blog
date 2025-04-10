@@ -75,7 +75,48 @@ const apiService = {
       console.error('获取标签失败:', error);
       return [];
     }
+  },
+
+
+  // 获取单篇文章详情
+  async getPostById(id) {
+    try {
+      console.log(`Fetching post with id: ${id}`);
+      const response = await api.get(`/posts/${id}`);
+      console.log('Post detail API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('获取文章详情失败:', error);
+      throw error; // 在文章详情页面，我们需要处理这个错误
+    }
+  },
+
+  // 获取文章评论
+  async getPostComments(postId) {
+    try {
+      console.log(`Fetching comments for post: ${postId}`);
+      const response = await api.get(`/posts/${postId}/comments`);
+      console.log('Comments API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('获取评论失败:', error);
+      return [];
+    }
+  },
+
+  // 添加评论
+  async addComment(postId, commentData) {
+    try {
+      console.log(`Adding comment to post: ${postId}`, commentData);
+      const response = await api.post(`/posts/${postId}/comments`, commentData);
+      console.log('Add comment API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('添加评论失败:', error);
+      throw error;
+    }
   }
+
 };
 
 export default apiService;
