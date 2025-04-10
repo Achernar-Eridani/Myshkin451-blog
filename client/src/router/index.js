@@ -42,7 +42,7 @@ const routes = [
   {
     path: '/posts/:id',
     name: 'post-detail',
-    component: () => import('../views/PlaceholderView.vue')
+    component: () => import('../views/PostDetailView.vue')
   }
 ];
 
