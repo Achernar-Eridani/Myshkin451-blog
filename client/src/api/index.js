@@ -105,7 +105,7 @@ const apiService = {
   },
 
   // 添加评论
-  async addComment(postId, commentData) {
+  async createComment(postId, commentData) {
     try {
       console.log(`Adding comment to post: ${postId}`, commentData);
       const response = await api.post(`/posts/${postId}/comments`, commentData);
@@ -113,6 +113,32 @@ const apiService = {
       return response.data;
     } catch (error) {
       console.error('添加评论失败:', error);
+      throw error;
+    }
+  },
+
+  // 更新评论
+  async updateComment(commentId, content) {
+    try {
+      console.log(`Updating comment: ${commentId}`);
+      const response = await api.put(`/comments/${commentId}`, { content });
+      console.log('Update comment API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('更新评论失败:', error);
+      throw error;
+    }
+  },
+
+  // 删除评论
+  async deleteComment(commentId) {
+    try {
+      console.log(`Deleting comment: ${commentId}`);
+      const response = await api.delete(`/comments/${commentId}`);
+      console.log('Delete comment API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('删除评论失败:', error);
       throw error;
     }
   }
