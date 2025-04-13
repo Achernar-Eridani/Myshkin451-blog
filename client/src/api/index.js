@@ -141,6 +141,53 @@ const apiService = {
       console.error('删除评论失败:', error);
       throw error;
     }
+  },
+
+  // 用户登录
+  async login(credentials) {
+    try {
+      console.log('User login attempt:', credentials.email);
+      const response = await api.post('/users/login', credentials);
+      console.log('Login API response:', response.data);
+      
+      // 存储用户数据和token
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('登录失败:', error);
+      throw error;
+    }
+  },
+
+  // 用户注册
+  async register(userData) {
+    try {
+      console.log('User registration attempt:', userData.email);
+      const response = await api.post('/users/register', userData);
+      console.log('Register API response:', response.data);
+      
+      // 如果注册成功并返回token，自动登录
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('注册失败:', error);
+      throw error;
+    }
+  },
+
+  // 用户登出
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    console.log('User logged out');
   }
 
 };
