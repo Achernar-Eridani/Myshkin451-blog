@@ -62,18 +62,7 @@
             
             <!-- 评论区 -->
             <div class="mt-8 bg-white rounded-lg shadow-sm border p-6">
-              <h3 class="text-xl font-bold text-gray-800 mb-6">评论</h3>
-              
-              <!-- 评论列表 - 稍后实现 -->
-              <div class="space-y-4 mb-6">
-                <p class="text-gray-600">评论功能将在下一步实现...</p>
-              </div>
-              
-              <!-- 评论表单 - 稍后实现 -->
-              <div class="border-t pt-6">
-                <h4 class="text-lg font-semibold mb-4">发表评论</h4>
-                <p class="text-gray-600">评论表单将在下一步实现...</p>
-              </div>
+              <CommentSection :post-id="route.params.id" />
             </div>
           </div>
           
@@ -120,6 +109,7 @@
   import Footer from '../components/Footer.vue';
   import api from '../api';
   import MarkdownIt from 'markdown-it';
+  import CommentSection from '../components/CommentSection.vue';
   import 'highlight.js/styles/github.css'; // 确保安装此依赖
   
   // 创建markdown-it实例
