@@ -68,9 +68,9 @@
   import { useRouter, useRoute } from 'vue-router';
   import Navbar from '../components/Navbar.vue';
   import Footer from '../components/Footer.vue';
-  import MarkdownEditor from '../components/editor/MarkdownEditor.vue';
-  import MetadataEditor from '../components/editor/MetadataEditor.vue';
-  import CategoryTagSelector from '../components/editor/CategoryTagSelector.vue';
+  import MarkdownEditor from '../components/MarkdownEditor.vue';
+  import MetadataEditor from '../components/MetadataEditor.vue';
+  import CategoryTagSelector from '../components/CategoryTagSelector.vue';
   import api from '../api';
   
   // 路由相关
@@ -96,11 +96,115 @@
   
   // 保存文章
   const saveArticle = async () => {
-    // 保存逻辑...
+    if (!article.title.trim()) {
+      error.value = '文章标题不能为空';
+      return;
+    }
+    
+    loading.value = true;
+    error.value = '';
+    
+    try {
+      let response;
+      
+      if (article.id) {
+        // 更新现有文章
+        response = await api.updatePost(article.id, {
+          title: article.title,
+          content: article.content,
+          excerpt: article.excerpt || null,
+          categoryId: article.categoryId || null,
+          tagIds: article.tagIds,
+          status: article.published ? 'published' : 'draft'
+        });
+      } else {
+        // 创建新文章
+        response = await api.createPost({
+          title: article.title,
+          content: article.content,
+          excerpt: article.excerpt || null,
+          categoryId: article.categoryId || null,
+          tagIds: article.tagIds,
+          status: article.published ? 'published' : 'draft'
+        });
+      }
+      
+      console.log('文章保存成功:', response);
+      
+      // 保存成功，跳转到文章详情页
+      router.push(`/posts/${response.id}`);
+    } catch (err) {
+      console.error('保存文章失败:', err);
+      error.value = err.response?.data?.message || '保存文章失败，请重试';
+    } finally {
+      loading.value = false;
+    }
   };
   
-  // 获取数据和初始化
+  // 获取分类列表
+  const fetchCategories = async () => {
+    try {
+      categories.value = await api.getCategories();
+      console.log('获取到的分类数据:', categories.value);
+    } catch (err) {
+      console.error('获取分类失败:', err);
+      error.value = '获取分类失败';
+    }
+  };
+  
+  // 获取标签列表
+  const fetchTags = async () => {
+    try {
+      tags.value = await api.getTags();
+      console.log('获取到的标签数据:', tags.value);
+    } catch (err) {
+      console.error('获取标签失败:', err);
+      error.value = '获取标签失败';
+    }
+  };
+  
+  // 加载现有文章（编辑模式）
+  const fetchArticle = async (id) => {
+    try {
+      const post = await api.getPostById(id);
+      
+      article.id = post.id;
+      article.title = post.title;
+      article.content = post.content;
+      article.excerpt = post.excerpt || '';
+      article.categoryId = post.categoryId || '';
+      article.published = post.status === 'published';
+      
+      // 处理标签
+      if (post.tags && Array.isArray(post.tags)) {
+        article.tagIds = post.tags.map(tag => tag.id);
+      }
+    } catch (err) {
+      console.error('获取文章失败:', err);
+      error.value = '获取文章失败，请重试';
+    }
+  };
+  
+  // 组件挂载时加载数据
   onMounted(async () => {
-    // 初始化逻辑...
+    // 检查用户权限
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const isAdmin = user?.isAdmin || user?.role === 'admin';
+    
+    if (!isAdmin) {
+      // 非管理员跳转到首页
+      router.push('/');
+      return;
+    }
+    
+    // 获取分类和标签
+    await Promise.all([fetchCategories(), fetchTags()]);
+    
+    // 如果是编辑模式，加载文章
+    const articleId = route.params.id;
+    if (articleId) {
+      await fetchArticle(articleId);
+    }
   });
   </script>
