@@ -8,8 +8,22 @@
       <div class="flex flex-col md:flex-row">
         <!-- 左侧主内容区 -->
         <div class="w-full md:w-2/3 md:pr-6">
-          <!-- 页面标题 -->
-          <h1 class="text-3xl font-bold text-gray-800 mb-6">最新文章</h1>
+          <!-- 页面标题和写文章按钮 -->
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">最新文章</h1>
+            
+            <!-- 管理员显示写文章按钮 -->
+            <router-link 
+              v-if="isAdmin" 
+              to="/write" 
+              class="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              写文章
+            </router-link>
+          </div>
           
           <!-- 加载状态 -->
           <div v-if="loading" class="flex justify-center items-center py-12">
@@ -107,8 +121,20 @@ const categories = ref([]);
 const tags = ref([]);
 const loadingCategories = ref(true);
 const loadingTags = ref(true);
+const isAdmin = ref(false); // 添加管理员状态检查
 
-// 在 HomeView.vue 的 <script setup> 部分中修改 fetchPosts 函数
+// 检查是否为管理员
+const checkAdminStatus = () => {
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const userData = JSON.parse(userStr);
+      isAdmin.value = userData.isAdmin === true || userData.role === 'admin';
+    } catch (e) {
+      console.error('解析用户数据失败', e);
+    }
+  }
+};
 
 // 获取文章列表
 const fetchPosts = async (page = 1) => {
@@ -156,6 +182,7 @@ const fetchPosts = async (page = 1) => {
     loading.value = false;
   }
 };
+
 // 获取分类列表
 const fetchCategories = async () => {
   try {
@@ -196,5 +223,6 @@ onMounted(() => {
   fetchPosts();
   fetchCategories();
   fetchTags();
+  checkAdminStatus(); // 检查管理员状态
 });
 </script>
