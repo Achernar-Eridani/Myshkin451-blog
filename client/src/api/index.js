@@ -183,31 +183,79 @@ const apiService = {
     }
   },
 
-  // 创建文章
-async createPost(postData) {
-  try {
-    console.log('Creating post:', postData);
-    const response = await api.post('/posts', postData);
-    console.log('Create post response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('创建文章失败:', error);
-    throw error;
-  }
-},
+    // 创建文章
+  async createPost(postData) {
+    try {
+      console.log('Creating post:', postData);
+      const response = await api.post('/posts', postData);
+      console.log('Create post response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('创建文章失败:', error);
+      throw error;
+    }
+  },
 
-// 更新文章
-async updatePost(id, postData) {
-  try {
-    console.log(`Updating post ${id}:`, postData);
-    const response = await api.put(`/posts/${id}`, postData);
-    console.log('Update post response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('更新文章失败:', error);
-    throw error;
-  }
-},
+  // 更新文章
+  async updatePost(id, postData) {
+    try {
+      console.log(`Updating post ${id}:`, postData);
+      const response = await api.put(`/posts/${id}`, postData);
+      console.log('Update post response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('更新文章失败:', error);
+      throw error;
+    }
+  },
+
+  // 上传文章图片
+  async uploadPostImage(formData) {
+    try {
+      const response = await api.post('/upload/image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Upload image response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('上传图片失败:', error);
+      throw error;
+    }
+  },
+
+  // 上传文章封面
+  async uploadPostCover(postId, formData) {
+    try {
+      const response = await api.post(`/posts/${postId}/cover`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Upload cover response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('上传封面失败:', error);
+      throw error;
+    }
+  },
+
+  // 上传用户头像
+  async uploadAvatar(formData) {
+    try {
+      const response = await api.post('/upload/avatar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Upload avatar response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('上传头像失败:', error);
+      throw error;
+    }
+  },
 
   // 用户登出
   logout() {
