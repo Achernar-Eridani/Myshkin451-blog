@@ -234,3 +234,78 @@ exports.deletePost = async (req, res) => {
         res.status(500).json({ message: '服务器错误', error: error.message });
     }
 };
+
+// 搜索文章
+exports.searchPosts = async (req, res) => {
+    try {
+        const { 
+            query,          // 搜索关键词
+            page = 1,       // 页码，默认第1页
+            limit = 10,     // 每页数量，默认10篇
+            sortBy = 'createdAt', // 排序字段
+            order = 'DESC'  // 排序方向
+        } = req.query;
+        
+        // 计算分页偏移量
+        const offset = (page - 1) * limit;
+        
+        // 构建搜索条件
+        const { Op } = require('sequelize');
+        const whereCondition = {
+            // 仅显示已发布的文章
+            status: 'published'
+        };
+        
+        // 如果有搜索关键词，添加到查询条件
+        if (query) {
+            whereCondition[Op.or] = [
+                { title: { [Op.like]: `%${query}%` } },
+                { content: { [Op.like]: `%${query}%` } },
+                { excerpt: { [Op.like]: `%${query}%` } }
+            ];
+        }
+        
+        // 查询文章总数（用于分页）
+        const count = await Post.count({ where: whereCondition });
+        
+        // 查询文章列表
+        const posts = await Post.findAll({
+            where: whereCondition,
+            include: [
+                {
+                    model: User,
+                    as: 'author',
+                    attributes: ['id', 'username']
+                },
+                {
+                    model: Category,
+                    as: 'category',
+                    attributes: ['id', 'name', 'slug']
+                },
+                {
+                    model: Tag,
+                    as: 'tags',
+                    attributes: ['id', 'name', 'slug'],
+                    through: { attributes: [] }
+                }
+            ],
+            order: [[sortBy, order]],
+            limit: parseInt(limit),
+            offset: parseInt(offset)
+        });
+        
+        // 返回结果，包含分页信息
+        res.json({
+            posts,
+            pagination: {
+                total: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: parseInt(page),
+                hasMore: page < Math.ceil(count / limit)
+            }
+        });
+    } catch (error) {
+        console.error('搜索文章失败:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+};
