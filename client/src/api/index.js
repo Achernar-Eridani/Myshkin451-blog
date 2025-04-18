@@ -209,21 +209,28 @@ const apiService = {
     }
   },
 
-  // 上传文章图片
-  async uploadPostImage(formData) {
-    try {
-      const response = await api.post('/upload/image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log('Upload image response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('上传图片失败:', error);
-      throw error;
-    }
-  },
+// 上传文章图片
+async uploadPostImage(formData) {
+  try {
+    console.log('上传图片...');
+    // 使用正确的路径
+    const response = await api.post('/uploads/image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log('上传成功:', response.data);
+    
+    // 根据后端uploadController.js的返回结构
+    return {
+      url: response.data.imagePath, // 使用后端返回的图片路径
+      title: ''
+    };
+  } catch (error) {
+    console.error('上传图片失败:', error);
+    throw error;
+  }
+},
 
   // 上传文章封面
   async uploadPostCover(postId, formData) {

@@ -26,6 +26,17 @@
         ></textarea>
     </div>
     </div>
+    <!-- 封面图片上传 -->
+    <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2">文章封面</label>
+        <ImageUploader 
+            v-model:value="article.coverImage" 
+            label="上传文章封面图片"
+            upload-type="post"
+            :post-id="article.id"
+            @upload-success="handleCoverUploadSuccess"
+        />
+    </div>
 </template>
 
 <script setup>

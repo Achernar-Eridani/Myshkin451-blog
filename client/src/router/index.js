@@ -49,6 +49,11 @@ const routes = [
     name: 'write-post',
     component: () => import('../views/EditorView.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/guestbook',
+    name: 'guestbook',
+    component: () => import('../views/PlaceholderView.vue') // 临时使用占位组件
   }
 ];
 
