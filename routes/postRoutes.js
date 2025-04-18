@@ -15,5 +15,7 @@ router.delete('/:id', protect, postController.deletePost);
 router.put('/:id/tags', protect, postController.managePostTags);
 router.get('/:postId/comments', commentController.getPostComments);
 router.post('/:postId/comments', protect, commentController.createComment);
+router.get('/search', postController.searchPosts);
+
 
 module.exports = router;

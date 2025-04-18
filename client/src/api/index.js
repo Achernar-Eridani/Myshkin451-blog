@@ -264,6 +264,30 @@ async uploadPostImage(formData) {
     }
   },
 
+  // 在client/src/api/index.js中添加搜索方法
+
+  // 搜索文章
+  async searchPosts(params = {}) {
+    try {
+      console.log('Searching posts with params:', params);
+      const response = await api.get('/posts/search', { params });
+      console.log('Search results:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('搜索文章失败:', error);
+      // 返回空结果而不是抛出错误，以便前端可以处理
+      return { 
+        posts: [], 
+        pagination: { 
+          total: 0, 
+          totalPages: 0, 
+          currentPage: 1, 
+          hasMore: false 
+        } 
+      };
+    }
+  },
+
   // 用户登出
   logout() {
     localStorage.removeItem('token');
