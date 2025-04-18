@@ -25,12 +25,9 @@
           </router-link>
           
           <!-- 搜索功能(预留) -->
-          <div class="relative" @click="showSearchNotice">
-            <button class="text-gray-600 hover:text-gray-900 focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
+          <!-- 在桌面端导航链接部分添加 -->
+          <div class="relative hidden md:block w-64">
+            <SearchBar />
           </div>
           
           <!-- 登录/注册或用户菜单 -->
@@ -145,6 +142,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import SearchBar from './SearchBar.vue';
+
 
 const router = useRouter();
 
@@ -197,10 +196,6 @@ const toggleMobileMenu = () => {
 
 const toggleProfileMenu = () => {
   showProfileMenu.value = !showProfileMenu.value;
-};
-
-const showSearchNotice = () => {
-  alert('搜索功能即将上线!');
 };
 
 const logout = () => {

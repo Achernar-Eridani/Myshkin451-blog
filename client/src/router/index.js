@@ -54,6 +54,12 @@ const routes = [
     path: '/guestbook',
     name: 'guestbook',
     component: () => import('../views/PlaceholderView.vue') // 临时使用占位组件
+  },
+
+  {
+    path: '/search',
+    name: 'search-results',
+    component: () => import('../views/SearchResultsView.vue')
   }
 ];
 
