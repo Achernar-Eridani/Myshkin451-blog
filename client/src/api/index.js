@@ -264,8 +264,6 @@ async uploadPostImage(formData) {
     }
   },
 
-  // 在client/src/api/index.js中添加搜索方法
-
   // 搜索文章
   async searchPosts(params = {}) {
     try {
@@ -285,6 +283,57 @@ async uploadPostImage(formData) {
           hasMore: false 
         } 
       };
+    }
+  },
+
+    // 用户个人中心相关API
+  async getUserProfile() {
+    try {
+      const response = await api.get('/users/profile');
+      return response.data;
+    } catch (error) {
+      console.error('获取用户资料失败:', error);
+      throw error;
+    }
+  },
+
+  async updateUserProfile(profileData) {
+    try {
+      const response = await api.put('/users/profile', profileData);
+      return response.data;
+    } catch (error) {
+      console.error('更新用户资料失败:', error);
+      throw error;
+    }
+  },
+
+  async updatePassword(passwordData) {
+    try {
+      const response = await api.put('/users/password', passwordData);
+      return response.data;
+    } catch (error) {
+      console.error('更新密码失败:', error);
+      throw error;
+    }
+  },
+
+  async getUserPosts() {
+    try {
+      const response = await api.get('/users/posts');
+      return response.data;
+    } catch (error) {
+      console.error('获取用户文章失败:', error);
+      throw error;
+    }
+  },
+
+  async getUserComments() {
+    try {
+      const response = await api.get('/users/comments');
+      return response.data;
+    } catch (error) {
+      console.error('获取用户评论失败:', error);
+      throw error;
     }
   },
 

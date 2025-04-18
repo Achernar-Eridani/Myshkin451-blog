@@ -60,6 +60,13 @@ const routes = [
     path: '/search',
     name: 'search-results',
     component: () => import('../views/SearchResultsView.vue')
+  },
+
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/ProfileView.vue'),
+    meta: { requiresAuth: true }
   }
 ];
 
