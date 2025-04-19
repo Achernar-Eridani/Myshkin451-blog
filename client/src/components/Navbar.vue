@@ -107,7 +107,7 @@
           <router-link to="/profile" class="block px-4 py-2 text-gray-600 hover:text-gray-900">
             个人资料
           </router-link>
-          <router-link to="/my-comments" class="block px-4 py-2 text-gray-600 hover:text-gray-900">
+          <router-link to="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
             我的评论
           </router-link>
           <!-- 管理员选项 -->

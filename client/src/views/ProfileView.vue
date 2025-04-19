@@ -360,7 +360,7 @@
   </template>
   
   <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, onMounted, watch} from 'vue';
   import { useRouter } from 'vue-router';
   import Navbar from '../components/Navbar.vue';
   import Footer from '../components/Footer.vue';
@@ -483,37 +483,41 @@
     }
   };
   
-  // 获取用户文章
-  const fetchUserPosts = async () => {
-    try {
-      loadingPosts.value = true;
-      
-      const response = await api.getUserPosts();
-      userPosts.value = response.posts || [];
-      
-    } catch (err) {
-      console.error('获取用户文章失败:', err);
-      userPosts.value = [];
-    } finally {
-      loadingPosts.value = false;
-    }
-  };
-  
-  // 获取用户评论
-  const fetchUserComments = async () => {
-    try {
-      loadingComments.value = true;
-      
-      const response = await api.getUserComments();
-      userComments.value = response.comments || [];
-      
-    } catch (err) {
-      console.error('获取用户评论失败:', err);
-      userComments.value = [];
-    } finally {
-      loadingComments.value = false;
-    }
-  };
+// 获取用户文章
+const fetchUserPosts = async () => {
+  try {
+    console.log('开始获取用户文章...');
+    loadingPosts.value = true;
+    
+    const response = await api.getUserPosts();
+    console.log('获取到的用户文章:', response);
+    userPosts.value = response.posts || [];
+    
+  } catch (err) {
+    console.error('获取用户文章失败:', err);
+    userPosts.value = [];
+  } finally {
+    loadingPosts.value = false;
+  }
+};
+
+// 获取用户评论
+const fetchUserComments = async () => {
+  try {
+    console.log('开始获取用户评论...');
+    loadingComments.value = true;
+    
+    const response = await api.getUserComments();
+    console.log('获取到的用户评论:', response);
+    userComments.value = response.comments || [];
+    
+  } catch (err) {
+    console.error('获取用户评论失败:', err);
+    userComments.value = [];
+  } finally {
+    loadingComments.value = false;
+  }
+};
   
   // 确认删除文章
   const confirmDeletePost = async (postId) => {
@@ -583,23 +587,20 @@
     }
   };
   
-  // 监听标签切换
-  const watchTabChanges = () => {
-    // 当切换到特定标签时加载相应数据
-    if (activeTab.value === 'posts' && userPosts.value.length === 0) {
-      fetchUserPosts();
-    }
-    
-    if (activeTab.value === 'comments' && userComments.value.length === 0) {
-      fetchUserComments();
-    }
-  };
-  
-  // 组件挂载时获取用户资料
   onMounted(() => {
-    fetchUserProfile();
-    
-    // 监听标签变化
-    watchTabChanges();
-  });
+  fetchUserProfile();
+});
+
+// 监听标签变化
+watch(activeTab, (newTab, oldTab) => {
+  console.log('标签切换:', oldTab, '->', newTab);
+  
+  if (newTab === 'posts') {
+    console.log('加载用户文章');
+    fetchUserPosts();
+  } else if (newTab === 'comments') {
+    console.log('加载用户评论');
+    fetchUserComments();
+  }
+});
   </script>

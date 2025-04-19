@@ -1,6 +1,8 @@
-const { User } = require('../models');
+const { User, Post, Comment } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); 
+const { Op } = require('sequelize');
+
 
 // 注册新用户
 exports.register = async (req, res) => {

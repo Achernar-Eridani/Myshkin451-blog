@@ -319,21 +319,25 @@ async uploadPostImage(formData) {
 
   async getUserPosts() {
     try {
+      console.log('API调用: 获取用户文章');
       const response = await api.get('/users/posts');
+      console.log('API响应: 用户文章', response.data);
       return response.data;
     } catch (error) {
       console.error('获取用户文章失败:', error);
-      throw error;
+      return { posts: [] }; // 返回空数组而不是抛出错误
     }
   },
 
   async getUserComments() {
     try {
+      console.log('API调用: 获取用户评论');
       const response = await api.get('/users/comments');
+      console.log('API响应: 用户评论', response.data);
       return response.data;
     } catch (error) {
       console.error('获取用户评论失败:', error);
-      throw error;
+      return { comments: [] }; // 返回空数组而不是抛出错误
     }
   },
 
