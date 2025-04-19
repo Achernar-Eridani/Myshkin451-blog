@@ -95,3 +95,41 @@ exports.deleteTag = async (req, res) => {
         res.status(500).json({ message: '服务器错误', error: error.message });
     }
 };
+
+// 通过slug获取标签及其文章
+exports.getTagBySlug = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        
+        const tag = await Tag.findOne({
+            where: { slug },
+            include: {
+                model: Post,
+                as: 'posts',
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        attributes: ['id', 'username', 'avatar']
+                    },
+                    {
+                        model: Category,
+                        as: 'category',
+                        attributes: ['id', 'name', 'slug']
+                    }
+                ],
+                where: { status: 'published' }, // 只返回已发布的文章
+                order: [['createdAt', 'DESC']]
+            }
+        });
+        
+        if (!tag) {
+            return res.status(404).json({ message: '标签不存在' });
+        }
+        
+        res.json(tag);
+    } catch (error) {
+        console.error('获取标签详情失败:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+};

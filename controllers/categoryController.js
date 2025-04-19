@@ -93,3 +93,47 @@ exports.deleteCategory = async (req, res) => {
         res.status(500).json({ message: '服务器错误', error: error.message });
     }
 };
+
+// 通过slug获取分类及其文章
+exports.getCategoryBySlug = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        
+        const category = await Category.findOne({
+            where: { slug },
+            include: {
+                model: Post,
+                as: 'posts',
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        attributes: ['id', 'username', 'avatar']
+                    },
+                    {
+                        model: Category,
+                        as: 'category',
+                        attributes: ['id', 'name', 'slug']
+                    },
+                    {
+                        model: Tag,
+                        as: 'tags',
+                        attributes: ['id', 'name', 'slug'],
+                        through: { attributes: [] }
+                    }
+                ],
+                where: { status: 'published' }, // 只返回已发布的文章
+                order: [['createdAt', 'DESC']]
+            }
+        });
+        
+        if (!category) {
+            return res.status(404).json({ message: '分类不存在' });
+        }
+        
+        res.json(category);
+    } catch (error) {
+        console.error('获取分类详情失败:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+};
