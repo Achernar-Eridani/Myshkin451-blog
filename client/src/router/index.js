@@ -67,6 +67,27 @@ const routes = [
     name: 'profile',
     component: () => import('../views/ProfileView.vue'),
     meta: { requiresAuth: true }
+  },
+    // 分类和标签详情页
+  {
+    path: '/categories',
+    name: 'categories',
+    component: () => import('../views/CategoriesView.vue')
+  },
+  {
+    path: '/categories/:slug',
+    name: 'category-detail',
+    component: () => import('../views/CategoryDetailView.vue')
+  },
+  {
+    path: '/tags',
+    name: 'tags',
+    component: () => import('../views/TagsView.vue')
+  },
+  {
+    path: '/tags/:slug',
+    name: 'tag-detail',
+    component: () => import('../views/TagDetailView.vue')
   }
 ];
 

@@ -341,6 +341,32 @@ async uploadPostImage(formData) {
     }
   },
 
+    // 通过slug获取分类及其文章
+  async getCategoryBySlug(slug) {
+    try {
+      console.log(`获取分类(${slug})详情`);
+      const response = await api.get(`/categories/slug/${slug}`);
+      console.log('分类详情:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('获取分类详情失败:', error);
+      throw error;
+    }
+  },
+
+  // 通过slug获取标签及其文章
+  async getTagBySlug(slug) {
+    try {
+      console.log(`获取标签(${slug})详情`);
+      const response = await api.get(`/tags/slug/${slug}`);
+      console.log('标签详情:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('获取标签详情失败:', error);
+      throw error;
+    }
+  },
+
   // 用户登出
   logout() {
     localStorage.removeItem('token');
