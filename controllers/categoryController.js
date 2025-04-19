@@ -116,46 +116,44 @@ exports.deleteCategory = async (req, res) => {
 };
 
     // 通过slug获取分类及其文章
-    exports.getCategoryBySlug = async (req, res) => {
-        try {
-            const slug = req.params.slug;
-            console.log('请求的slug:', slug);
-            console.log('执行查询:', `SELECT * FROM categories WHERE slug = '${slug}'`);
-
-            const category = await Category.findOne({
-                where: { slug },
-                include: {
-                    model: Post,
-                    as: 'posts',
-                    include: [
-                        {
-                            model: User,
-                            as: 'author',
-                            attributes: ['id', 'username', 'avatar']
-                        },
-                        {
-                            model: Tag,
-                            as: 'tags',
-                            attributes: ['id', 'name', 'slug'],
-                            through: { attributes: [] }
-                        }
-                    ],
-                    where: { status: 'published' }, // 只返回已发布的文章
-                    required: false
-                }
-            });
-            
-            console.log('查询结果:', category ? `找到分类: ${category.name}, slug: ${category.slug}` : '未找到分类');
-
-            if (!category) {
-                console.log(`未找到分类: ${slug}`); // 调试日志
-                return res.status(404).json({ message: '分类不存在' });
+exports.getCategoryBySlug = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        console.log(`查询分类slug: ${slug}`);
+        
+        const category = await Category.findOne({
+        where: { slug },
+        include: {
+            model: Post,
+            as: 'posts',
+            include: [
+            {
+                model: User,
+                as: 'author',
+                attributes: ['id', 'username', 'avatar']
+            },
+            {
+                model: Tag,
+                as: 'tags',
+                attributes: ['id', 'name', 'slug'],
+                through: { attributes: [] }
             }
-            
-            console.log(`找到分类: ${category.name}`); // 调试日志
-            res.json(category);
-        } catch (error) {
-            console.error('获取分类详情失败:', error);
-            res.status(500).json({ message: '服务器错误', error: error.message });
+            ],
+            where: { status: 'published' },
+            attributes: ['id', 'title', 'slug', 'content', 'excerpt', 'createdAt', 'viewCount', 'coverImage'],
+            order: [['createdAt', 'DESC']]
         }
-};
+        });
+        
+        if (!category) {
+        console.log(`未找到分类: ${slug}`);
+        return res.status(404).json({ message: '分类不存在' });
+        }
+        
+        console.log(`找到分类: ${category.name}, 文章数: ${category.posts?.length || 0}`);
+        res.json(category);
+    } catch (error) {
+        console.error('获取分类详情失败:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
+    }
+    };

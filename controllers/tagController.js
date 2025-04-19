@@ -119,45 +119,47 @@ exports.deleteTag = async (req, res) => {
 // 通过slug获取标签及其文章
     exports.getTagBySlug = async (req, res) => {
         try {
-            const slug = req.params.slug;
-            console.log('请求的slug:', slug);
-            console.log('执行查询:', `SELECT * FROM tag WHERE slug = '${slug}'`);
-
-            
-            const tag = await Tag.findOne({
-                where: { slug },
-                include: {
-                    model: Post,
-                    as: 'posts',
-                    include: [
-                        {
-                            model: User,
-                            as: 'author',
-                            attributes: ['id', 'username', 'avatar']
-                        },
-                        {
-                            model: Category,
-                            as: 'category',
-                            attributes: ['id', 'name', 'slug']
-                        }
-                    ],
-                    where: { status: 'published' }, // 只返回已发布的文章
-                    required: false
-
+        const slug = req.params.slug;
+        console.log(`查询标签slug: ${slug}`);
+        
+        const tag = await Tag.findOne({
+            where: { slug },
+            include: {
+            model: Post,
+            as: 'posts',
+            include: [
+                {
+                model: User,
+                as: 'author',
+                attributes: ['id', 'username', 'avatar']
+                },
+                {
+                model: Category,
+                as: 'category',
+                attributes: ['id', 'name', 'slug']
+                },
+                {
+                model: Tag,
+                as: 'tags',
+                attributes: ['id', 'name', 'slug'],
+                through: { attributes: [] }
                 }
-            });
-            
-            console.log('查询结果:', tag ? `找到分类: ${tag.name}, slug: ${tag.slug}` : '未找到分类');
-
-            if (!tag) {
-                console.log(`未找到标签: ${slug}`); // 调试日志
-                return res.status(404).json({ message: '标签不存在' });
+            ],
+            where: { status: 'published' },
+            attributes: ['id', 'title', 'slug', 'content', 'excerpt', 'createdAt', 'viewCount', 'coverImage'],
+            order: [['createdAt', 'DESC']]
             }
-            
-            console.log(`找到标签: ${tag.name}`); // 调试日志
-            res.json(tag);
+        });
+        
+        if (!tag) {
+            console.log(`未找到标签: ${slug}`);
+            return res.status(404).json({ message: '标签不存在' });
+        }
+        
+        console.log(`找到标签: ${tag.name}, 文章数: ${tag.posts?.length || 0}`);
+        res.json(tag);
         } catch (error) {
-            console.error('获取标签详情失败:', error);
-            res.status(500).json({ message: '服务器错误', error: error.message });
+        console.error('获取标签详情失败:', error);
+        res.status(500).json({ message: '服务器错误', error: error.message });
         }
     };
