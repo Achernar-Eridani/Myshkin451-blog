@@ -9,16 +9,6 @@ const routes = [
   },
   // 临时路由 - 将来会替换为实际组件
   {
-    path: '/categories',
-    name: 'categories',
-    component: () => import('../views/PlaceholderView.vue')
-  },
-  {
-    path: '/tags',
-    name: 'tags',
-    component: () => import('../views/PlaceholderView.vue')
-  },
-  {
     path: '/login',
     name: 'login',
     component: () => import('../views/LoginView.vue')
@@ -29,16 +19,6 @@ const routes = [
     component: () => import('../views/RegisterView.vue')
   },
   // 动态路由
-  {
-    path: '/categories/:slug',
-    name: 'category-detail',
-    component: () => import('../views/PlaceholderView.vue')
-  },
-  {
-    path: '/tags/:slug',
-    name: 'tag-detail',
-    component: () => import('../views/PlaceholderView.vue')
-  },
   {
     path: '/posts/:id',
     name: 'post-detail',

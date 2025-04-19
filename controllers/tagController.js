@@ -120,7 +120,9 @@ exports.deleteTag = async (req, res) => {
     exports.getTagBySlug = async (req, res) => {
         try {
             const slug = req.params.slug;
-            console.log(`查询标签slug: ${slug}`); // 调试日志
+            console.log('请求的slug:', slug);
+            console.log('执行查询:', `SELECT * FROM tag WHERE slug = '${slug}'`);
+
             
             const tag = await Tag.findOne({
                 where: { slug },
@@ -139,10 +141,14 @@ exports.deleteTag = async (req, res) => {
                             attributes: ['id', 'name', 'slug']
                         }
                     ],
-                    where: { status: 'published' } // 只返回已发布的文章
+                    where: { status: 'published' }, // 只返回已发布的文章
+                    required: false
+
                 }
             });
             
+            console.log('查询结果:', tag ? `找到分类: ${tag.name}, slug: ${tag.slug}` : '未找到分类');
+
             if (!tag) {
                 console.log(`未找到标签: ${slug}`); // 调试日志
                 return res.status(404).json({ message: '标签不存在' });
