@@ -54,46 +54,24 @@
         </div>
         
         <!-- 右侧侧边栏 -->
+        <!-- 在右侧边栏中使用这些组件 -->
         <div class="w-full md:w-1/3 mt-8 md:mt-0">
-          <!-- 分类卡片 -->
-          <div class="bg-white rounded-lg shadow-sm border p-4 mb-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">分类</h2>
-            <div v-if="loadingCategories" class="text-center py-4">
-              <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-            </div>
-            <div v-else-if="categories.length === 0" class="text-gray-500 text-center py-2">
-              暂无分类
-            </div>
-            <div v-else class="space-y-2">
-              <router-link 
-                v-for="category in categories" 
-                :key="category.id" 
-                :to="`/categories/${category.slug}`"
-                class="block px-3 py-2 rounded hover:bg-gray-100 text-gray-700">
-                {{ category.name }}
-                <span class="text-gray-500 text-sm ml-1">({{ category.postCount || 0 }})</span>
-              </router-link>
-            </div>
+          <!-- 分类列表 -->
+          <div class="mb-6">
+            <CategoryList
+              :categories="categories"
+              :loading="loadingCategories"
+              title="文章分类"
+            />
           </div>
           
-          <!-- 标签云（预留） -->
-          <div class="bg-white rounded-lg shadow-sm border p-4">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">标签云</h2>
-            <div v-if="loadingTags" class="text-center py-4">
-              <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-            </div>
-            <div v-else-if="tags.length === 0" class="text-gray-500 text-center py-2">
-              暂无标签
-            </div>
-            <div v-else class="flex flex-wrap">
-              <router-link 
-                v-for="tag in tags" 
-                :key="tag.id" 
-                :to="`/tags/${tag.slug}`"
-                class="inline-block px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm mr-2 mb-2 hover:bg-gray-200">
-                {{ tag.name }}
-              </router-link>
-            </div>
+          <!-- 标签云 -->
+          <div>
+            <TagCloud
+              :tags="tags"
+              :loading="loadingTags"
+              title="标签云"
+            />
           </div>
         </div>
       </div>
@@ -110,6 +88,8 @@ import Navbar from '../components/Navbar.vue';
 import ArticleCard from '../components/ArticleCard.vue';
 import Pagination from '../components/Pagination.vue';
 import Footer from '../components/Footer.vue';
+import CategoryList from '../components/CategoryList.vue';
+import TagCloud from '../components/TagCloud.vue';
 import api from '../api';
 
 // 状态

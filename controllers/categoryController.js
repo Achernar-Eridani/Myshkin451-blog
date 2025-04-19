@@ -1,12 +1,33 @@
-const { Category, Post } = require('../models');
+const { Category, Post, User, Tag } = require('../models');
 
 // 获取所有分类
 exports.getAllCategories = async (req, res) => {
     try {
         const categories = await Category.findAll({
+            include: [
+                {
+                    model: Post,
+                    as: 'posts',
+                    attributes: ['id'],
+                    where: { status: 'published' },
+                    required: false // 确保没有文章的分类也能返回
+                }
+            ],
             order: [['name', 'ASC']]
         });
-        res.json(categories);
+
+        // 映射结果，包含文章数量
+        const result = categories.map(category => ({
+            id: category.id,
+            name: category.name,
+            slug: category.slug,
+            description: category.description,
+            postCount: category.posts ? category.posts.length : 0,
+            createdAt: category.createdAt,
+            updatedAt: category.updatedAt
+        }));
+
+        res.json(result);
     } catch (error) {
         res.status(500).json({ message: '服务器错误', error: error.message });
     }
@@ -94,46 +115,43 @@ exports.deleteCategory = async (req, res) => {
     }
 };
 
-// 通过slug获取分类及其文章
-exports.getCategoryBySlug = async (req, res) => {
-    try {
-        const slug = req.params.slug;
-        
-        const category = await Category.findOne({
-            where: { slug },
-            include: {
-                model: Post,
-                as: 'posts',
-                include: [
-                    {
-                        model: User,
-                        as: 'author',
-                        attributes: ['id', 'username', 'avatar']
-                    },
-                    {
-                        model: Category,
-                        as: 'category',
-                        attributes: ['id', 'name', 'slug']
-                    },
-                    {
-                        model: Tag,
-                        as: 'tags',
-                        attributes: ['id', 'name', 'slug'],
-                        through: { attributes: [] }
-                    }
-                ],
-                where: { status: 'published' }, // 只返回已发布的文章
-                order: [['createdAt', 'DESC']]
+    // 通过slug获取分类及其文章
+    exports.getCategoryBySlug = async (req, res) => {
+        try {
+            const slug = req.params.slug;
+            console.log(`查询分类slug: ${slug}`); // 调试日志
+            
+            const category = await Category.findOne({
+                where: { slug },
+                include: {
+                    model: Post,
+                    as: 'posts',
+                    include: [
+                        {
+                            model: User,
+                            as: 'author',
+                            attributes: ['id', 'username', 'avatar']
+                        },
+                        {
+                            model: Tag,
+                            as: 'tags',
+                            attributes: ['id', 'name', 'slug'],
+                            through: { attributes: [] }
+                        }
+                    ],
+                    where: { status: 'published' } // 只返回已发布的文章
+                }
+            });
+            
+            if (!category) {
+                console.log(`未找到分类: ${slug}`); // 调试日志
+                return res.status(404).json({ message: '分类不存在' });
             }
-        });
-        
-        if (!category) {
-            return res.status(404).json({ message: '分类不存在' });
+            
+            console.log(`找到分类: ${category.name}`); // 调试日志
+            res.json(category);
+        } catch (error) {
+            console.error('获取分类详情失败:', error);
+            res.status(500).json({ message: '服务器错误', error: error.message });
         }
-        
-        res.json(category);
-    } catch (error) {
-        console.error('获取分类详情失败:', error);
-        res.status(500).json({ message: '服务器错误', error: error.message });
-    }
 };
