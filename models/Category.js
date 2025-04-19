@@ -25,7 +25,6 @@ const Category = sequelize.define('Category', {
     }, {
     tableName: 'categories',
     timestamps: true,
-    // 在 models/Category.js 和 models/Tag.js 中
     hooks: {
         beforeValidate: (model) => {
             if (model.name && (!model.slug || model.changed('name'))) {
