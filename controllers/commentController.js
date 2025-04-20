@@ -214,8 +214,8 @@ exports.getRecentComments = async (req, res) => {
 	}
   };
   
-  // 获取所有评论(管理员用)
-  exports.getAllComments = async (req, res) => {
+// 获取所有评论(管理员用)
+exports.getAllComments = async (req, res) => {
 	try {
 	  const { status } = req.query;
 	  
@@ -224,8 +224,7 @@ exports.getRecentComments = async (req, res) => {
 		whereCondition.status = status;
 	  }
 	  
-	  const comments = await Comment.findAll({
-		where: whereCondition,
+	  const options = {
 		include: [
 		  {
 			model: User,
@@ -249,9 +248,16 @@ exports.getRecentComments = async (req, res) => {
 			]
 		  }
 		],
-		where: { parentId: null }, // 只获取顶级评论
 		order: [['createdAt', 'DESC']]
-	  });
+	  };
+	  
+	  // 添加顶级评论筛选和状态筛选
+	  options.where = { 
+		...whereCondition,
+		parentId: null // 只获取顶级评论
+	  };
+	  
+	  const comments = await Comment.findAll(options);
 	  
 	  res.json({ comments });
 	} catch (error) {
