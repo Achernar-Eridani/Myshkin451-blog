@@ -372,9 +372,125 @@ async uploadPostImage(formData) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     console.log('User logged out');
-  }
+  },
 
-  
+  // 在 client/src/api/index.js 中添加以下方法
+
+// 获取管理统计数据
+async getAdminStats() {
+  try {
+    const response = await api.get('/admin/stats');
+    return response.data;
+  } catch (error) {
+    console.error('获取管理统计数据失败:', error);
+    return {
+      postCount: 0,
+      commentCount: 0,
+      categoryCount: 0,
+      tagCount: 0,
+      userCount: 0
+    };
+  }
+},
+
+// 获取最近评论
+async getRecentComments(limit = 5) {
+  try {
+    const response = await api.get('/comments/recent', { params: { limit } });
+    return response.data;
+  } catch (error) {
+    console.error('获取最近评论失败:', error);
+    return { comments: [] };
+  }
+},
+
+// 获取所有评论
+async getAllComments(status = '') {
+  try {
+    const response = await api.get('/comments/all', { params: { status } });
+    return response.data;
+  } catch (error) {
+    console.error('获取所有评论失败:', error);
+    return { comments: [] };
+  }
+},
+
+// 更新评论状态
+async updateCommentStatus(commentId, status) {
+  try {
+    const response = await api.patch(`/comments/${commentId}/moderate`, { status });
+    return response.data;
+  } catch (error) {
+    console.error('更新评论状态失败:', error);
+    throw error;
+  }
+},
+
+// 创建分类
+async createCategory(categoryData) {
+  try {
+    const response = await api.post('/categories', categoryData);
+    return response.data;
+  } catch (error) {
+    console.error('创建分类失败:', error);
+    throw error;
+  }
+},
+
+// 更新分类
+async updateCategory(id, categoryData) {
+  try {
+    const response = await api.put(`/categories/${id}`, categoryData);
+    return response.data;
+  } catch (error) {
+    console.error('更新分类失败:', error);
+    throw error;
+  }
+},
+
+// 删除分类
+async deleteCategory(id) {
+  try {
+    const response = await api.delete(`/categories/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('删除分类失败:', error);
+    throw error;
+  }
+},
+
+// 创建标签
+async createTag(tagData) {
+  try {
+    const response = await api.post('/tags', tagData);
+    return response.data;
+  } catch (error) {
+    console.error('创建标签失败:', error);
+    throw error;
+  }
+},
+
+// 更新标签
+async updateTag(id, tagData) {
+  try {
+    const response = await api.put(`/tags/${id}`, tagData);
+    return response.data;
+  } catch (error) {
+    console.error('更新标签失败:', error);
+    throw error;
+  }
+},
+
+// 删除标签
+async deleteTag(id) {
+  try {
+    const response = await api.delete(`/tags/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('删除标签失败:', error);
+    throw error;
+  }
+}
 
 };
 

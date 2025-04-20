@@ -68,7 +68,16 @@ const routes = [
     path: '/tags/:slug',
     name: 'tag-detail',
     component: () => import('../views/TagDetailView.vue')
-  }
+  },
+  // 在 client/src/router/index.js 中添加管理页面路由
+
+// 管理后台路由
+{
+  path: '/admin',
+  name: 'admin',
+  component: () => import('../views/AdminView.vue'),
+  meta: { requiresAuth: true, requiresAdmin: true }
+}
 ];
 
 const router = createRouter({

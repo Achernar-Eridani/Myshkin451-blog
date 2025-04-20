@@ -24,8 +24,16 @@
             留言板
           </router-link>
           
-          <!-- 搜索功能(预留) -->
-          <!-- 在桌面端导航链接部分添加 -->
+          <!-- 添加管理后台链接 (仅管理员可见) -->
+          <router-link 
+            v-if="isAdmin" 
+            to="/admin" 
+            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+          >
+            管理后台
+          </router-link>
+          
+          <!-- 搜索功能 -->
           <div class="relative hidden md:block w-64">
             <SearchBar />
           </div>
@@ -50,16 +58,18 @@
                 <router-link to="/my-comments" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                   我的评论
                 </router-link>
-                <!-- 根据用户角色显示不同选项 -->
+                
+                <!-- 管理员选项 -->
                 <template v-if="isAdmin">
                   <div class="border-t border-gray-100 my-1"></div>
                   <router-link to="/write" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                     写文章
                   </router-link>
-                  <router-link to="/admin/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <router-link to="/admin" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                     管理后台
                   </router-link>
                 </template>
+                
                 <div class="border-t border-gray-100 my-1"></div>
                 <button @click="logout" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
                   退出登录
@@ -103,6 +113,15 @@
           留言板
         </router-link>
         
+        <!-- 移动端添加管理后台链接 (仅管理员可见) -->
+        <router-link 
+          v-if="isAdmin" 
+          to="/admin" 
+          class="block px-4 py-2 text-gray-600 hover:text-gray-900"
+        >
+          管理后台
+        </router-link>
+        
         <template v-if="isLoggedIn">
           <router-link to="/profile" class="block px-4 py-2 text-gray-600 hover:text-gray-900">
             个人资料
@@ -110,16 +129,15 @@
           <router-link to="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
             我的评论
           </router-link>
+          
           <!-- 管理员选项 -->
           <template v-if="isAdmin">
             <div class="border-t border-gray-100 my-1"></div>
             <router-link to="/write" class="block px-4 py-2 text-gray-600 hover:text-gray-900">
               写文章
             </router-link>
-            <router-link to="/admin/dashboard" class="block px-4 py-2 text-gray-600 hover:text-gray-900">
-              管理后台
-            </router-link>
           </template>
+          
           <div class="border-t border-gray-100 my-1"></div>
           <button @click="logout" class="block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900">
             退出登录
@@ -135,7 +153,6 @@
         </template>
       </div>
     </div>
-    
   </nav>
 </template>
 
@@ -143,7 +160,6 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import SearchBar from './SearchBar.vue';
-
 
 const router = useRouter();
 
@@ -171,7 +187,7 @@ const checkUserStatus = () => {
         userName.value = userData.username || '用户';
         userAvatar.value = userData.avatar || null;
         
-        // 检查用户角色 (假设用户数据中有isAdmin或role字段)
+        // 检查用户角色 (确保正确检测管理员状态)
         isAdmin.value = userData.isAdmin === true || userData.role === 'admin';
       }
     } catch (error) {

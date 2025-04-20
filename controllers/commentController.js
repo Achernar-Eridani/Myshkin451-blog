@@ -184,3 +184,78 @@ exports.moderateComment = async (req, res) => {
 		res.status(500).json({ message: '服务器错误' });
 	}
 };
+
+// 获取最近评论
+exports.getRecentComments = async (req, res) => {
+	try {
+	  const limit = parseInt(req.query.limit) || 5;
+	  
+	  const comments = await Comment.findAll({
+		include: [
+		  {
+			model: User,
+			as: 'user',
+			attributes: ['id', 'username', 'avatar']
+		  },
+		  {
+			model: Post,
+			as: 'post',
+			attributes: ['id', 'title']
+		  }
+		],
+		order: [['createdAt', 'DESC']],
+		limit
+	  });
+	  
+	  res.json({ comments });
+	} catch (error) {
+	  console.error('获取最近评论失败:', error);
+	  res.status(500).json({ message: '服务器错误', error: error.message });
+	}
+  };
+  
+  // 获取所有评论(管理员用)
+  exports.getAllComments = async (req, res) => {
+	try {
+	  const { status } = req.query;
+	  
+	  const whereCondition = {};
+	  if (status) {
+		whereCondition.status = status;
+	  }
+	  
+	  const comments = await Comment.findAll({
+		where: whereCondition,
+		include: [
+		  {
+			model: User,
+			as: 'user',
+			attributes: ['id', 'username', 'avatar']
+		  },
+		  {
+			model: Post,
+			as: 'post',
+			attributes: ['id', 'title']
+		  },
+		  {
+			model: Comment,
+			as: 'replies',
+			include: [
+			  {
+				model: User,
+				as: 'user',
+				attributes: ['id', 'username', 'avatar']
+			  }
+			]
+		  }
+		],
+		where: { parentId: null }, // 只获取顶级评论
+		order: [['createdAt', 'DESC']]
+	  });
+	  
+	  res.json({ comments });
+	} catch (error) {
+	  console.error('获取所有评论失败:', error);
+	  res.status(500).json({ message: '服务器错误', error: error.message });
+	}
+  };

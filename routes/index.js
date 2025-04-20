@@ -6,6 +6,7 @@ const categoryRoutes = require('./categoryRoutes');
 const tagRoutes = require('./tagRoutes');
 const commentRoutes = require('./commentRoutes');
 const uploadRoutes = require('./uploadRoutes');
+const adminRoutes = require('./adminRoutes');
 
 
 
@@ -15,6 +16,7 @@ router.use('/categories', categoryRoutes);
 router.use('/tags', tagRoutes);
 router.use('/comments', commentRoutes); 
 router.use('/uploads', uploadRoutes);
+router.use('/admin', adminRoutes);
 
 
 // API首页
