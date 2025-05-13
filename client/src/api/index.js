@@ -251,7 +251,7 @@ async uploadPostImage(formData) {
   // 上传用户头像
   async uploadAvatar(formData) {
     try {
-      const response = await api.post('/upload/avatar', formData, {
+      const response = await api.post('/uploads/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

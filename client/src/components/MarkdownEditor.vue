@@ -52,9 +52,16 @@ const uploadImageHandler = async (files) => {
       // 上传图片
       const response = await api.uploadPostImage(formData);
       
+      // 获取正确的图片路径 - 添加对imagePath的检查
+      const imagePath = response.imageUrl || response.url || response.path || response.imagePath;
+      
+      // 如果是相对路径，转换为绝对路径
+      const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+      const imageUrl = imagePath.startsWith('http') ? imagePath : `${baseUrl}${imagePath}`;
+      
       // 返回图片URL
       results.push({
-        url: response.imageUrl || response.url || response.path,
+        url: imageUrl,
         alt: file.name
       });
     } catch (error) {

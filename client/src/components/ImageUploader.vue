@@ -134,7 +134,7 @@
     try {
       // 创建表单数据
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('avatar', file);
       
       let response;
       
