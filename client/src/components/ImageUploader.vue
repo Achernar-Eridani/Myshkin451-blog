@@ -3,7 +3,7 @@
       <!-- 预览区域 -->
       <div v-if="imageUrl" class="mb-3">
         <img 
-          :src="imageUrl" 
+          :src="displayImageUrl" 
           :alt="label" 
           class="max-h-48 rounded-lg border shadow-sm object-cover"
         >
@@ -56,7 +56,7 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import api from '../api';
   
   // Props
@@ -86,12 +86,18 @@
   const error = ref('');
   const fileInput = ref(null);
   const dragover = ref(false);
-  
+  const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+
   // 计算属性
   const dropzoneStyle = computed(() => {
     return dragover.value ? 'border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.05);' : '';
   });
   
+  const displayImageUrl = computed(() => {
+    if (!imageUrl.value) return '';
+    return imageUrl.value.startsWith('http') ? imageUrl.value : `${baseUrl}${imageUrl.value}`;
+  });
+
   // 方法
   const triggerFileInput = () => {
     fileInput.value.click();
@@ -132,28 +138,34 @@
     uploading.value = true;
     
     try {
-      // 创建表单数据
-      const formData = new FormData();
-      formData.append('avatar', file);
-      
-      let response;
-      
-      if (props.uploadType === 'avatar') {
-        // 上传头像
-        response = await api.uploadAvatar(formData);
-      } else if (props.postId) {
-        // 上传文章封面
-        response = await api.uploadPostCover(props.postId, formData);
-      } else {
-        // 上传普通文章图片
-        response = await api.uploadPostImage(formData);
-      }
-      
-      // 更新图片URL
-      imageUrl.value = response.imageUrl || response.url || response.path;
-      emit('update:value', imageUrl.value);
-      emit('upload-success', imageUrl.value);
-      
+        // 创建表单数据
+        const formData = new FormData();
+        
+        // 根据上传类型使用正确的字段名
+        if (props.uploadType === 'avatar') {
+          formData.append('avatar', file);
+        } else {
+          formData.append('image', file); // 文章图片用'image'字段名
+        }
+        
+        let response;
+        
+        if (props.uploadType === 'avatar') {
+          response = await api.uploadAvatar(formData);
+        } else if (props.postId) {
+          response = await api.uploadPostCover(props.postId, formData);
+        } else {
+          response = await api.uploadPostImage(formData);
+        }
+        
+        // 获取图片URL并添加服务器地址
+        const path = response.avatar || response.coverImage || response.imagePath || response.imageUrl || response.url || response.path;
+        const fullImageUrl = path.startsWith('http') ? path : `${baseUrl}${path}`;
+        
+        // 更新图片URL
+        imageUrl.value = fullImageUrl;
+        emit('update:value', path); // 发出原始路径，方便保存到数据库
+        emit('upload-success', fullImageUrl);
     } catch (err) {
       console.error('图片上传失败:', err);
       error.value = '图片上传失败，请重试';
@@ -167,4 +179,8 @@
     imageUrl.value = '';
     emit('update:value', '');
   };
+
+  onMounted(() => {
+  
+  });
   </script>
