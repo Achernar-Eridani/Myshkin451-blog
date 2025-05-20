@@ -1,76 +1,50 @@
 <template>
   <div class="markdown-editor">
-    <label v-if="label" class="block text-gray-700 text-sm font-bold mb-2">{{ label }}</label>
+    <label
+      v-if="label"
+      class="block text-gray-700 text-sm font-bold mb-2"
+      >{{ label }}</label
+    >
     <Editor
       :value="modelValue"
       @change="$emit('update:modelValue', $event)"
       :plugins="plugins"
       :locale="locale"
-      :uploadImages="uploadImageHandler"
+      :uploadImages="handleUpload"
     />
   </div>
 </template>
 
 <script setup>
-import { Editor } from '@bytemd/vue-next';
-import gfm from '@bytemd/plugin-gfm';
-import highlight from '@bytemd/plugin-highlight';
-import 'bytemd/dist/index.css';
-import api from '../api';
+import { Editor } from "@bytemd/vue-next";
+import gfm from "@bytemd/plugin-gfm";
+import highlight from "@bytemd/plugin-highlight";
+import "bytemd/dist/index.css";
+import api from "../api";
 
-// 组件属性
-const props = defineProps({
-  modelValue: String,
-  label: String
-});
+const props = defineProps({ modelValue: String, label: String });
+const emit = defineEmits(["update:modelValue"]);
 
-// 组件事件
-const emit = defineEmits(['update:modelValue']);
+const plugins = [gfm(), highlight()];
+const locale = { write: "编辑", preview: "预览", uploadImage: "上传图片" };
 
-// 编辑器配置
-const plugins = [
-  gfm(),
-  highlight()
-];
-
-const locale = {
-  write: '编辑',
-  preview: '预览',
-  uploadImage: '上传图片'
-};
-
-// 图片上传处理函数
-const uploadImageHandler = async (files) => {
-  const results = [];
-  
+async function handleUpload(files) {
+  const result = [];
   for (const file of files) {
     try {
-      // 创建FormData
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      // 上传图片
-      const response = await api.uploadPostImage(formData);
-      
-      // 获取正确的图片路径 - 添加对imagePath的检查
-      const imagePath = response.imageUrl || response.url || response.path || response.imagePath;
-      
-      // 如果是相对路径，转换为绝对路径
-      const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
-      const imageUrl = imagePath.startsWith('http') ? imagePath : `${baseUrl}${imagePath}`;
-      
-      // 返回图片URL
-      results.push({
-        url: imageUrl,
-        alt: file.name
-      });
-    } catch (error) {
-      console.error('图片上传失败:', error);
+      const fd = new FormData();
+      fd.append("image", file);
+
+      // { url, path }
+      const { url, path } = await api.uploadPostImage(fd);
+
+      result.push({ url, alt: file.name });
+    } catch (err) {
+      console.error("图片上传失败", err);
     }
   }
-  
-  return results;
-};
+  return result;
+}
 </script>
 
 <style scoped>
