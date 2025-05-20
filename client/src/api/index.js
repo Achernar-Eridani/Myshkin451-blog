@@ -221,10 +221,10 @@ async uploadPostImage(formData) {
     });
     console.log('上传成功:', response.data);
     
-    // 根据后端uploadController.js的返回结构
+   // 直接把后端给的 url / path 返回
     return {
-      url: response.data.imagePath, // 使用后端返回的图片路径
-      title: ''
+        url:  response.data.url,   // 绝对地址，Markdown 直接用
+        path: response.data.path   // 相对路径（若以后要存库）
     };
   } catch (error) {
     console.error('上传图片失败:', error);
