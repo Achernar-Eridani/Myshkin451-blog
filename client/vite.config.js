@@ -2,17 +2,17 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  plugins: [vue()],
   server: {
+    host: true,  // 允许外部访问
     proxy: {
-     '/uploads': {              // 静态资源
-        target: 'http://localhost:3000',
+      '/api': {
+        target: 'http://backend:3000',  // 改为backend服务名
         changeOrigin: true
       },
-      '/api': {
-        target: 'http://localhost:3000',
+      '/uploads': {
+        target: 'http://backend:3000',
         changeOrigin: true
       }
     }
   }
-});
+})
