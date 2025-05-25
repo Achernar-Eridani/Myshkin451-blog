@@ -42,6 +42,8 @@ services:
       - /app/node_modules        # 不覆盖依赖
       - ./uploads:/app/uploads
     command: ["node", "app.js"]
+    env_file:
+      - .env.docker
 
   frontend:
     build:
