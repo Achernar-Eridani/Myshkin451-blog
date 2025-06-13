@@ -33,6 +33,10 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date() });
+});
+
 // 启动服务器
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {

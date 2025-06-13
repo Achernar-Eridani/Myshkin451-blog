@@ -1,0 +1,92 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:       # 手动触发
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_FRONTEND: ${{ github.repository_owner }}/blog-frontend
+  IMAGE_BACKEND:  ${{ github.repository_owner }}/blog-backend
+  TAG: ${{ github.sha }}
+
+jobs:
+  # ---------- 1) 可扩展的占位测试 ----------
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "TODO: add tests"; echo "::notice::Skip tests for now"
+
+  # ---------- 2) Build & Push ----------
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build & push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          file: ./client/Dockerfile.prod
+          platforms: linux/amd64
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
+          push: true
+
+      - name: Build & push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.backend.prod
+          platforms: linux/amd64
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
+          push: true
+
+  # ---------- 3) Deploy ----------
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ECS_HOST }}
+          username: ${{ secrets.ECS_USER }}
+          key: ${{ secrets.ECS_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/apps/Myshkin451-blog
+            export TAG=${{ env.TAG }}
+
+            echo "Previous tags:" && docker compose -f docker-compose.prod.yml images
+
+            # 拉取镜像
+            docker compose -f docker-compose.prod.yml pull frontend backend
+
+            # 启动 / 滚动更新
+            docker compose -f docker-compose.prod.yml up -d frontend backend
+
+            # 简单健康检查（失败即退出，让 GA 标红）
+            echo "Health checking..."
+            for i in {1..10}; do
+              if curl -fsSL https://myshkin451.com/api/health; then
+                echo "✓ Health OK"; exit 0
+              fi
+              echo "retry $i"; sleep 3
+            done
+            echo "✗ Health check failed"; exit 1
