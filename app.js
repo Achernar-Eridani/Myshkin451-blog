@@ -15,6 +15,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date() });
+});
 
 // 路由
 app.use('/api', routes);
@@ -33,9 +36,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date() });
-});
+
 
 // 启动服务器
 const PORT = process.env.PORT || 3000;
