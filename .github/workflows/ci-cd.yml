@@ -7,9 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_REPO: achernar-eridani
-  IMAGE_FRONTEND: ${{ github.GH_USER }}/blog-frontend
-  IMAGE_BACKEND: ${{ github.GH_USER }}/blog-backend
+  IMAGE_OWNER: achernar-eridani  # 固定的 GitHub 用户名（小写）
   TAG: ${{ github.sha }}
 
 jobs:
@@ -22,11 +20,13 @@ jobs:
           echo "TODO: add tests"
           echo "::notice::Skip tests for now"
 
-
   # ---------- 2) Build & Push ----------
   build:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -46,8 +46,8 @@ jobs:
           file: ./client/Dockerfile.prod
           platforms: linux/amd64
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/blog-frontend:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/blog-frontend:latest
           push: true
 
       - name: Build & push backend
@@ -57,8 +57,8 @@ jobs:
           file: ./Dockerfile.backend.prod
           platforms: linux/amd64
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/blog-backend:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/blog-backend:latest
           push: true
 
   # ---------- 3) Deploy ----------
