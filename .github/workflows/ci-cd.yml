@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  GH_USER: achernar-eridani
+  IMAGE_REPO: achernar-eridani
   IMAGE_FRONTEND: ${{ github.GH_USER }}/blog-frontend
   IMAGE_BACKEND: ${{ github.GH_USER }}/blog-backend
   TAG: ${{ github.sha }}
@@ -46,8 +46,8 @@ jobs:
           file: ./client/Dockerfile.prod
           platforms: linux/amd64
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:latest
           push: true
 
       - name: Build & push backend
@@ -57,8 +57,8 @@ jobs:
           file: ./Dockerfile.backend.prod
           platforms: linux/amd64
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}:latest
           push: true
 
   # ---------- 3) Deploy ----------
