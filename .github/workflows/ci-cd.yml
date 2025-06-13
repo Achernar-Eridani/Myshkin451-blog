@@ -8,8 +8,8 @@ on:
 env:
   REGISTRY: ghcr.io
   GH_USER: achernar-eridani
-  IMAGE_FRONTEND: ${{ github.repository_owner }}/blog-frontend
-  IMAGE_BACKEND: ${{ github.repository_owner }}/blog-backend
+  IMAGE_FRONTEND: ${{ github.GH_USER }}/blog-frontend
+  IMAGE_BACKEND: ${{ github.GH_USER }}/blog-backend
   TAG: ${{ github.sha }}
 
 jobs:
