@@ -3,12 +3,12 @@ name: CI-CD
 on:
   push:
     branches: [main]
-  workflow_dispatch:       # 手动触发
+  workflow_dispatch: # 手动触发
 
 env:
   REGISTRY: ghcr.io
   IMAGE_FRONTEND: ${{ github.repository_owner }}/blog-frontend
-  IMAGE_BACKEND:  ${{ github.repository_owner }}/blog-backend
+  IMAGE_BACKEND: ${{ github.repository_owner }}/blog-backend
   TAG: ${{ github.sha }}
 
 jobs:
@@ -17,7 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "TODO: add tests"; echo "::notice::Skip tests for now"
+      - run: |
+          echo "TODO: add tests"
+          echo "::notice::Skip tests for now"
+
 
   # ---------- 2) Build & Push ----------
   build:
