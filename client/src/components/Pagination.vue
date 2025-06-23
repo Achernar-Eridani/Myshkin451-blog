@@ -5,10 +5,10 @@
         <button 
           @click="onPageChange(currentPage - 1)" 
           :disabled="currentPage === 1"
-          :class="['px-3 py-2 rounded-l-md border', 
+          :class="['px-3 py-2 rounded-l-md border dark:border-dark-border', 
                   currentPage === 1 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50']">
+                    ? 'bg-gray-100 dark:bg-dark-card text-gray-400 dark:text-dark-muted cursor-not-allowed' 
+                    : 'bg-white dark:bg-dark-surface text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-card']">
           上一页
         </button>
         
@@ -16,16 +16,16 @@
         <template v-for="page in displayedPages" :key="page">
           <button 
             v-if="page === '...'"
-            class="px-3 py-2 border bg-white text-gray-700">
+            class="px-3 py-2 border dark:border-dark-border bg-white dark:bg-dark-surface text-gray-700 dark:text-dark-text">
             {{ page }}
           </button>
           <button 
             v-else
             @click="onPageChange(page)"
-            :class="['px-3 py-2 border', 
+            :class="['px-3 py-2 border dark:border-dark-border', 
                     currentPage === page 
-                      ? 'bg-blue-600 text-white border-blue-600' 
-                      : 'bg-white text-gray-700 hover:bg-gray-50']">
+                      ? 'bg-blue-600 dark:bg-dark-accent text-white border-blue-600 dark:border-dark-accent' 
+                      : 'bg-white dark:bg-dark-surface text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-card']">
             {{ page }}
           </button>
         </template>
@@ -34,10 +34,10 @@
         <button 
           @click="onPageChange(currentPage + 1)" 
           :disabled="currentPage === totalPages"
-          :class="['px-3 py-2 rounded-r-md border', 
+          :class="['px-3 py-2 rounded-r-md border dark:border-dark-border', 
                   currentPage === totalPages 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50']">
+                    ? 'bg-gray-100 dark:bg-dark-card text-gray-400 dark:text-dark-muted cursor-not-allowed' 
+                    : 'bg-white dark:bg-dark-surface text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-card']">
           下一页
         </button>
       </nav>

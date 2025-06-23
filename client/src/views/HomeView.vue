@@ -10,13 +10,13 @@
         <div class="w-full md:w-2/3 md:pr-6">
           <!-- 页面标题和写文章按钮 -->
           <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">最新文章</h1>
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-dark-text">最新文章</h1>
             
             <!-- 管理员显示写文章按钮 -->
             <router-link 
               v-if="isAdmin" 
               to="/write" 
-              class="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+              class="flex items-center bg-blue-600 dark:bg-dark-accent hover:bg-blue-700 dark:hover:bg-dark-accent/80 text-white px-4 py-2 rounded-md"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -31,8 +31,8 @@
           </div>
           
           <!-- 没有文章时显示 -->
-          <div v-else-if="posts.length === 0" class="bg-gray-50 rounded-lg p-8 text-center">
-            <p class="text-gray-600">暂无文章发布</p>
+          <div v-else-if="posts.length === 0" class="bg-gray-50 dark:bg-dark-card rounded-lg p-8 text-center">
+            <p class="text-gray-600 dark:text-dark-muted">暂无文章发布</p>
           </div>
           
           <!-- 文章列表 -->

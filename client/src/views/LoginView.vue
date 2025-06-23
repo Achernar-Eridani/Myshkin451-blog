@@ -3,36 +3,36 @@
     <Navbar />
     
     <div class="container mx-auto px-4 py-12">
-      <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">登录</h1>
+      <div class="max-w-md mx-auto bg-white dark:bg-dark-surface rounded-lg shadow-md p-8">
+        <h1 class="text-2xl font-bold text-center text-gray-800 dark:text-dark-text mb-6">登录</h1>
         
         <!-- 错误提示 -->
-        <div v-if="error" class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div v-if="error" class="mb-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded">
           {{ error }}
         </div>
         
         <!-- 登录表单 -->
         <form @submit.prevent="handleLogin" class="space-y-4">
           <div>
-            <label for="email" class="block text-gray-700 mb-1">邮箱</label>
+            <label for="email" class="block text-gray-700 dark:text-dark-text mb-1">邮箱</label>
             <input
               id="email"
               v-model="email"
               type="email"
               required
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-dark-accent"
               placeholder="请输入邮箱地址"
             >
           </div>
           
           <div>
-            <label for="password" class="block text-gray-700 mb-1">密码</label>
+            <label for="password" class="block text-gray-700 dark:text-dark-text mb-1">密码</label>
             <input
               id="password"
               v-model="password"
               type="password"
               required
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-dark-accent"
               placeholder="请输入密码"
             >
           </div>
@@ -41,7 +41,7 @@
             <button 
               type="submit" 
               :disabled="isSubmitting"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+              class="w-full bg-blue-600 dark:bg-dark-accent hover:bg-blue-700 dark:hover:bg-blue-500 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-dark-accent disabled:bg-blue-300 dark:disabled:bg-dark-accent/50"
             >
               {{ isSubmitting ? '登录中...' : '登录' }}
             </button>

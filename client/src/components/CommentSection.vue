@@ -1,13 +1,13 @@
 <template>
     <div class="comment-section">
-      <h3 class="text-xl font-bold text-gray-800 mb-6">评论 ({{ totalComments }})</h3>
+      <h3 class="text-xl font-bold text-gray-800 dark:text-dark-text mb-6">评论 ({{ totalComments }})</h3>
       
       <!-- 评论列表 -->
       <div v-if="loading" class="py-4 text-center">
         <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
       </div>
       
-      <div v-else-if="comments.length === 0" class="text-center py-6 text-gray-500">
+      <div v-else-if="comments.length === 0" class="text-center py-6 text-gray-500 dark:text-dark-muted">
         暂无评论，成为第一个评论的人吧！
       </div>
       
@@ -22,12 +22,12 @@
       </div>
       
       <!-- 评论输入框 -->
-      <div class="border-t pt-6">
-        <h4 class="text-lg font-semibold mb-4">发表评论</h4>
+      <div class="border-t dark:border-dark-border pt-6">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-dark-text mb-4">发表评论</h4>
         
-        <div v-if="!isLoggedIn" class="bg-gray-50 p-4 rounded text-center">
-          <p class="text-gray-600 mb-2">登录后才能发表评论</p>
-          <router-link to="/login" class="text-blue-600 hover:underline">
+        <div v-if="!isLoggedIn" class="bg-gray-50 dark:bg-dark-card p-4 rounded text-center">
+          <p class="text-gray-600 dark:text-dark-muted mb-2">登录后才能发表评论</p>
+          <router-link to="/login" class="text-blue-600 dark:text-dark-accent hover:underline">
             立即登录
           </router-link>
         </div>
@@ -36,7 +36,7 @@
           <div class="mb-4">
             <textarea
               v-model="newComment"
-              class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              class="w-full p-3 border dark:border-dark-border bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text placeholder-gray-500 dark:placeholder-dark-muted rounded-lg focus:ring focus:ring-blue-200 dark:focus:ring-dark-accent/50 focus:border-blue-500 dark:focus:border-dark-accent"
               rows="4"
               placeholder="写下你的评论..."
             ></textarea>
