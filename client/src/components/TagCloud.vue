@@ -1,12 +1,12 @@
 <template>
-    <div class="tag-cloud bg-white dark:bg-dark-surface rounded-lg shadow-sm border dark:border-dark-border p-4">
-      <h2 class="text-xl font-bold text-gray-800 dark:text-dark-text mb-4">{{ title || '标签云' }}</h2>
+    <div class="tag-cloud bg-white rounded-lg shadow-sm border p-4">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">{{ title || '标签云' }}</h2>
       
       <div v-if="loading" class="text-center py-4">
         <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
       </div>
       
-      <div v-else-if="tags.length === 0" class="text-gray-500 dark:text-dark-muted text-center py-2">
+      <div v-else-if="tags.length === 0" class="text-gray-500 text-center py-2">
         暂无标签
       </div>
       
@@ -15,14 +15,14 @@
           v-for="tag in tags" 
           :key="tag.id" 
           :to="`/tags/${tag.slug}`"
-          class="inline-block px-3 py-1 rounded text-sm hover:bg-gray-200 dark:hover:bg-dark-card transition duration-200"
+          class="inline-block px-3 py-1 rounded text-sm hover:bg-gray-200 transition duration-200"
           :class="[
-            activeTagId === tag.id ? 'bg-blue-100 dark:bg-dark-accent/20 text-blue-700 dark:text-dark-accent' : 'bg-gray-100 dark:bg-dark-card text-gray-700 dark:text-dark-text',
+            activeTagId === tag.id ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700',
             getFontSizeClass(tag)
           ]"
         >
           {{ tag.name }}
-          <span v-if="showCount" class="text-gray-500 dark:text-dark-muted text-xs ml-1">({{ tag.postCount || 0 }})</span>
+          <span v-if="showCount" class="text-gray-500 text-xs ml-1">({{ tag.postCount || 0 }})</span>
         </router-link>
       </div>
     </div>

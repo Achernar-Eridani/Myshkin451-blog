@@ -3,24 +3,24 @@
     <Navbar />
     
     <div class="container mx-auto px-4 py-6">
-      <div class="bg-white dark:bg-dark-surface rounded-lg shadow-sm border dark:border-dark-border p-6">
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-dark-text mb-6">写文章</h1>
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <h1 class="text-2xl font-bold mb-6">写文章</h1>
         
         <!-- 文章标题 -->
         <div class="mb-6">
-          <label for="title" class="block text-gray-700 dark:text-dark-text text-sm font-bold mb-2">文章标题</label>
+          <label for="title" class="block text-gray-700 text-sm font-bold mb-2">文章标题</label>
           <input 
             id="title" 
             v-model="article.title" 
             type="text" 
-            class="w-full px-3 py-2 border dark:border-dark-border bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-dark-accent" 
+            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
             placeholder="请输入文章标题"
           >
         </div>
         
         <!-- 文章摘要 -->
         <div class="mb-6">
-          <label for="excerpt" class="block text-gray-700 dark:text-dark-text text-sm font-bold mb-2">文章摘要</label>
+          <label for="excerpt" class="block text-gray-700 text-sm font-bold mb-2">文章摘要</label>
           <textarea 
             id="excerpt" 
             v-model="article.excerpt" 
@@ -32,7 +32,7 @@
         
         <!-- Markdown编辑器 -->
         <div class="mb-6">
-          <label class="block text-gray-700 dark:text-dark-text text-sm font-bold mb-2">文章内容</label>
+          <label class="block text-gray-700 text-sm font-bold mb-2">文章内容</label>
           <MarkdownEditor v-model="article.content" />
         </div>
         
@@ -40,7 +40,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <!-- 分类选择 -->
           <div>
-            <label class="block text-gray-700 dark:text-dark-text text-sm font-bold mb-2">文章分类</label>
+            <label class="block text-gray-700 text-sm font-bold mb-2">文章分类</label>
             <select 
               v-model="article.categoryId" 
               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

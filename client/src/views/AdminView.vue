@@ -3,19 +3,19 @@
     <Navbar />
     
     <div class="container mx-auto px-4 py-8">
-      <div class="bg-white dark:bg-dark-surface shadow-sm rounded-lg border dark:border-dark-border p-6 mb-6">
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-dark-text mb-6">管理后台</h1>
+      <div class="bg-white shadow-sm rounded-lg border p-6 mb-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">管理后台</h1>
         
         <!-- 管理区域选项卡 -->
         <div class="mb-6">
-          <div class="border-b dark:border-dark-border">
+          <div class="border-b">
             <nav class="flex -mb-px">
               <button 
                 v-for="tab in tabs" 
                 :key="tab.id"
                 @click="activeTab = tab.id"
                 class="py-2 px-4 mr-2 font-medium text-sm leading-5 focus:outline-none"
-                :class="activeTab === tab.id ? 'border-b-2 border-blue-600 dark:border-dark-accent text-blue-600 dark:text-dark-accent' : 'text-gray-500 dark:text-dark-muted hover:text-gray-700 dark:hover:text-dark-text'"
+                :class="activeTab === tab.id ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'"
               >
                 {{ tab.name }}
               </button>

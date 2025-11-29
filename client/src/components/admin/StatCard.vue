@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white dark:bg-dark-surface shadow rounded-lg p-6">
+    <div class="bg-white shadow rounded-lg p-6">
       <div class="flex items-center">
         <div class="p-3 rounded-full" :class="`bg-${color}-100 text-${color}-500`">
           <!-- 文档图标 -->
@@ -23,8 +23,8 @@
           </svg>
         </div>
         <div class="ml-4">
-          <h2 class="text-gray-600 dark:text-dark-muted text-sm">{{ title }}</h2>
-          <p class="text-2xl font-semibold text-gray-800 dark:text-dark-text">{{ count }}</p>
+          <h2 class="text-gray-600 text-sm">{{ title }}</h2>
+          <p class="text-2xl font-semibold text-gray-800">{{ count }}</p>
         </div>
       </div>
     </div>

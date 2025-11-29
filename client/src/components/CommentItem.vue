@@ -1,5 +1,5 @@
 <template>
-    <div class="comment-item border-b dark:border-dark-border pb-4 last:border-b-0 last:pb-0">
+    <div class="comment-item border-b pb-4 last:border-b-0 last:pb-0">
       <!-- 主评论内容 -->
       <div class="flex space-x-4">
         <!-- 用户头像 -->
@@ -10,7 +10,7 @@
             alt="用户头像" 
             class="w-10 h-10 rounded-full object-cover"
           >
-          <div v-else class="w-10 h-10 rounded-full bg-gray-300 dark:bg-dark-card flex items-center justify-center text-gray-600 dark:text-dark-muted">
+          <div v-else class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
             {{ comment.user?.username?.[0] || '?' }}
           </div>
         </div>
@@ -18,21 +18,21 @@
         <!-- 评论内容 -->
         <div class="flex-grow">
           <div class="flex items-center mb-1">
-            <span class="font-semibold text-gray-800 dark:text-dark-text">{{ comment.user?.username || '未知用户' }}</span>
-            <span class="text-xs text-gray-500 dark:text-dark-muted ml-2">{{ formatDate(comment.createdAt) }}</span>
+            <span class="font-semibold text-gray-800">{{ comment.user?.username || '未知用户' }}</span>
+            <span class="text-xs text-gray-500 ml-2">{{ formatDate(comment.createdAt) }}</span>
           </div>
           
           <!-- 编辑模式 -->
           <div v-if="isEditing" class="mb-2">
             <textarea
               v-model="editContent"
-              class="w-full p-2 border dark:border-dark-border bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text rounded focus:ring focus:ring-blue-200 dark:focus:ring-dark-accent/50 focus:border-blue-500 dark:focus:border-dark-accent"
+              class="w-full p-2 border rounded focus:ring focus:ring-blue-200 focus:border-blue-500"
               rows="3"
             ></textarea>
             <div class="flex justify-end space-x-2 mt-2">
               <button 
                 @click="isEditing = false" 
-                class="px-3 py-1 bg-gray-200 dark:bg-dark-card hover:bg-gray-300 dark:hover:bg-dark-card/80 text-gray-700 dark:text-dark-text rounded"
+                class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded"
               >
                 取消
               </button>
@@ -47,28 +47,28 @@
           </div>
           
           <!-- 普通显示模式 -->
-          <p v-else class="text-gray-700 dark:text-dark-text mb-2">{{ comment.content }}</p>
+          <p v-else class="text-gray-700 mb-2">{{ comment.content }}</p>
           
           <!-- 操作按钮 -->
-          <div class="flex space-x-4 text-sm text-gray-500 dark:text-dark-muted">
+          <div class="flex space-x-4 text-sm text-gray-500">
             <button 
               v-if="!isEditing" 
               @click="toggleReplyForm" 
-              class="hover:text-blue-600 dark:hover:text-dark-accent"
+              class="hover:text-blue-600"
             >
               回复
             </button>
             <button 
               v-if="canEdit && !isEditing" 
               @click="startEditing" 
-              class="hover:text-blue-600 dark:hover:text-dark-accent"
+              class="hover:text-blue-600"
             >
               编辑
             </button>
             <button 
               v-if="canEdit && !isEditing" 
               @click="confirmDelete" 
-              class="hover:text-red-600 dark:hover:text-red-400"
+              class="hover:text-red-600"
             >
               删除
             </button>
@@ -78,14 +78,14 @@
           <div v-if="showReplyForm" class="mt-4">
             <textarea
               v-model="replyContent"
-              class="w-full p-2 border dark:border-dark-border bg-white dark:bg-dark-surface text-gray-900 dark:text-dark-text placeholder-gray-500 dark:placeholder-dark-muted rounded focus:ring focus:ring-blue-200 dark:focus:ring-dark-accent/50 focus:border-blue-500 dark:focus:border-dark-accent"
+              class="w-full p-2 border rounded focus:ring focus:ring-blue-200 focus:border-blue-500"
               rows="2"
               placeholder="写下你的回复..."
             ></textarea>
             <div class="flex justify-end space-x-2 mt-2">
               <button 
                 @click="showReplyForm = false" 
-                class="px-3 py-1 bg-gray-200 dark:bg-dark-card hover:bg-gray-300 dark:hover:bg-dark-card/80 text-gray-700 dark:text-dark-text rounded"
+                class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded"
               >
                 取消
               </button>
@@ -100,7 +100,7 @@
           </div>
           
           <!-- 嵌套回复 -->
-          <div v-if="comment.replies && comment.replies.length > 0" class="mt-4 pl-4 border-l-2 border-gray-200 dark:border-dark-border space-y-4">
+          <div v-if="comment.replies && comment.replies.length > 0" class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4">
             <!-- 递归显示每条回复 -->
             <div v-for="reply in comment.replies" :key="reply.id" class="py-2">
               <div class="flex space-x-3">
@@ -112,7 +112,7 @@
                     alt="用户头像" 
                     class="w-8 h-8 rounded-full object-cover"
                   >
-                  <div v-else class="w-8 h-8 rounded-full bg-gray-300 dark:bg-dark-card flex items-center justify-center text-gray-600 dark:text-dark-muted text-sm">
+                  <div v-else class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-sm">
                     {{ reply.user?.username?.[0] || '?' }}
                   </div>
                 </div>
@@ -120,23 +120,23 @@
                 <!-- 回复内容 -->
                 <div class="flex-grow">
                   <div class="flex items-center mb-1">
-                    <span class="font-semibold text-gray-800 dark:text-dark-text">{{ reply.user?.username || '未知用户' }}</span>
-                    <span class="text-xs text-gray-500 dark:text-dark-muted ml-2">{{ formatDate(reply.createdAt) }}</span>
+                    <span class="font-semibold text-gray-800">{{ reply.user?.username || '未知用户' }}</span>
+                    <span class="text-xs text-gray-500 ml-2">{{ formatDate(reply.createdAt) }}</span>
                   </div>
-                  <p class="text-gray-700 dark:text-dark-text">{{ reply.content }}</p>
+                  <p class="text-gray-700">{{ reply.content }}</p>
                   
                   <!-- 回复的操作按钮 -->
-                  <div v-if="isLoggedIn" class="flex space-x-4 text-xs text-gray-500 dark:text-dark-muted mt-1">
+                  <div v-if="isLoggedIn" class="flex space-x-4 text-xs text-gray-500 mt-1">
                     <button 
                       @click="toggleReplyForm" 
-                      class="hover:text-blue-600 dark:hover:text-dark-accent"
+                      class="hover:text-blue-600"
                     >
                       回复
                     </button>
                     <button 
                       v-if="isCurrentUser(reply.userId)" 
                       @click="confirmDeleteReply(reply.id)" 
-                      class="hover:text-red-600 dark:hover:text-red-400"
+                      class="hover:text-red-600"
                     >
                       删除
                     </button>

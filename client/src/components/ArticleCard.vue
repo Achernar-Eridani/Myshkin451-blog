@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white dark:bg-dark-surface rounded-lg shadow-sm overflow-hidden border dark:border-dark-border hover:shadow-md transition duration-300">
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden border hover:shadow-md transition duration-300">
       <!-- 文章封面图(如果有) -->
       <img v-if="article.coverImage" 
            :src="article.coverImage" 
@@ -9,11 +9,11 @@
       <div class="p-4">
         <!-- 文章标题 -->
         <router-link :to="`/posts/${article.id}`" class="block">
-          <h2 class="text-xl font-bold text-gray-800 dark:text-dark-text hover:text-blue-600 dark:hover:text-dark-accent mb-2">{{ article.title || '无标题文章' }}</h2>
+          <h2 class="text-xl font-bold text-gray-800 hover:text-blue-600 mb-2">{{ article.title || '无标题文章' }}</h2>
         </router-link>
         
         <!-- 文章元信息 -->
-        <div class="flex items-center text-sm text-gray-500 dark:text-dark-muted mb-3">
+        <div class="flex items-center text-sm text-gray-500 mb-3">
           <span v-if="article.author" class="flex items-center mr-4">
             <img :src="article.author.avatar || '/img/default-avatar.png'" 
                  :alt="article.author.username || '作者'"
@@ -31,7 +31,7 @@
         </div>
         
         <!-- 文章摘要 -->
-        <p class="text-gray-600 dark:text-dark-muted mb-4">
+        <p class="text-gray-600 mb-4">
           {{ article.excerpt || (article.content && article.content.substring(0, 150) + '...') || '暂无摘要' }}
         </p>
         
@@ -39,14 +39,14 @@
         <div class="flex flex-wrap items-center">
           <router-link v-if="article.category" 
                        :to="`/categories/${article.category.slug || article.category.id}`"
-                       class="text-sm text-blue-600 dark:text-dark-accent bg-blue-50 dark:bg-dark-accent/20 px-2 py-1 rounded mr-2 mb-2">
+                       class="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded mr-2 mb-2">
             {{ article.category.name || '分类' }}
           </router-link>
           
           <router-link v-for="tag in article.tags || []" 
                        :key="tag.id || tag" 
                        :to="`/tags/${tag.slug || tag.id || tag}`"
-                       class="text-sm text-gray-600 dark:text-dark-muted bg-gray-100 dark:bg-dark-card px-2 py-1 rounded mr-2 mb-2">
+                       class="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded mr-2 mb-2">
             # {{ tag.name || tag }}
           </router-link>
         </div>
