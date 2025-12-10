@@ -3,7 +3,7 @@
     class="group relative flex flex-col h-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:border-gray-900 dark:hover:border-gray-500 hover:shadow-xl"
   >
     <div class="relative w-full h-56 overflow-hidden bg-gray-100 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-800">
-      <img 
+      <!-- <img 
         v-if="article.coverImage" 
         :src="article.coverImage" 
         :alt="article.title"
@@ -19,7 +19,21 @@
         class="absolute top-4 right-4 bg-white/90 dark:bg-black/80 backdrop-blur-sm px-3 py-1 text-xs font-mono font-medium uppercase tracking-wider text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white transition-colors"
       >
         {{ article.category.name }}
-      </router-link>
+      </router-link> -->
+      <img 
+      v-if="article.coverImage" 
+      :src="article.coverImage" 
+      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+    />
+    
+    <div 
+      v-else 
+      class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900"
+    >
+      <span class="text-4xl font-mono font-bold text-gray-300 dark:text-gray-700 select-none opacity-50">
+        M / 451
+      </span>
+    </div>
     </div>
 
     <div class="flex flex-col flex-grow p-6">
