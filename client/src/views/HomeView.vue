@@ -86,7 +86,7 @@
 import { ref, onMounted } from 'vue';
 import Navbar from '../components/Navbar.vue';
 // import ArticleCard from '../components/ArticleCard.vue';
-import ArticleCardV2 from '@/components/ArticleCardV2.vue'; // 引入新的
+import ArticleCardV2 from '../components/ArticleCardV2.vue'; // 引入新的
 import Pagination from '../components/Pagination.vue';
 import Footer from '../components/Footer.vue';
 import CategoryList from '../components/CategoryList.vue';
