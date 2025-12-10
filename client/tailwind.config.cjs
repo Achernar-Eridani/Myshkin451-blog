@@ -14,6 +14,5 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/line-clamp'), // 如果你的 tailwind 版本较老，需要这个插件
   ],
 }
