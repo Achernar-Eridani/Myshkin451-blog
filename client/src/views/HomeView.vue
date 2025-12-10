@@ -1,50 +1,88 @@
 <template>
-  <div>
-    <!-- 导航栏 -->
+  <div class="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-300">
     <Navbar />
     
-    <!-- 内容区域 -->
-    <div class="container mx-auto px-4 py-8">
-      <div class="flex flex-col md:flex-row">
-        <!-- 左侧主内容区 -->
-        <div class="w-full md:w-2/3 md:pr-6">
-          <!-- 页面标题和写文章按钮 -->
-          <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">最新文章</h1>
-            
-            <!-- 管理员显示写文章按钮 -->
+    <main class="container mx-auto px-4 py-12 max-w-6xl">
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16 animate-fade-in-up">
+        
+        <div class="md:col-span-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-2xl p-8 flex flex-col justify-center relative overflow-hidden group">
+          <div class="relative z-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
+              Hello, I'm <span class="text-blue-600 dark:text-blue-500">Myshkin</span>.
+            </h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400 font-mono mb-6 max-w-lg">
+              > Backend Developer<br>
+              > History Enthusiast<br>
+              > Building AI Agents...
+            </p>
             <router-link 
               v-if="isAdmin" 
               to="/write" 
-              class="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+              class="inline-flex items-center px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-black font-medium rounded-lg hover:opacity-90 transition-opacity"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-              写文章
+              New Post
             </router-link>
           </div>
-          
-          <!-- 加载状态 -->
-          <div v-if="loading" class="flex justify-center items-center py-12">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div class="absolute right-0 top-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 transition-colors">
+          <h3 class="text-sm font-mono font-bold text-gray-500 uppercase mb-4">Explore Topics</h3>
+          <div class="flex flex-wrap gap-2">
+            <router-link 
+              v-for="cat in categories.slice(0, 5)" 
+              :key="cat.id" 
+              :to="`/categories/${cat.slug || cat.id}`"
+              class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+            >
+              {{ cat.name }}
+            </router-link>
           </div>
-          
-          <!-- 没有文章时显示 -->
-          <div v-else-if="posts.length === 0" class="bg-gray-50 rounded-lg p-8 text-center">
-            <p class="text-gray-600">暂无文章发布</p>
+        </div>
+
+        <a href="https://github.com/your-github-id" target="_blank" class="bg-gray-900 dark:bg-blue-600 rounded-2xl p-6 text-white flex flex-col justify-between hover:scale-[1.02] transition-transform">
+          <div class="flex justify-between items-start">
+             <svg class="w-8 h-8 opacity-80" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+             <svg class="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
           </div>
-          
-          <!-- 文章列表 -->
-          <div v-else class="space-y-6">
-            <ArticleCardV2 
-              v-for="post in posts" 
-              :key="post.id" 
-              :article="post" 
-            />
+          <div>
+            <p class="font-bold text-lg">GitHub</p>
+            <p class="text-sm opacity-70">View my projects</p>
           </div>
-          
-          <!-- 分页 -->
+        </a>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-8">
+           <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+             <span class="w-2 h-8 bg-blue-600 rounded-sm mr-3"></span>
+             Latest Writings
+           </h2>
+           <div v-if="totalPages > 1" class="font-mono text-sm text-gray-500">
+             Page {{ currentPage }} / {{ totalPages }}
+           </div>
+        </div>
+
+        <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="n in 6" :key="n" class="h-64 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"></div>
+        </div>
+
+        <div v-else-if="posts.length === 0" class="py-20 text-center text-gray-500">
+           <p class="text-xl">Nothing here yet.</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ArticleCardV2 
+            v-for="post in posts" 
+            :key="post.id" 
+            :article="post" 
+          />
+        </div>
+
+        <div class="mt-16 flex justify-center">
           <Pagination 
             v-if="posts.length > 0" 
             :current-page="currentPage" 
@@ -52,32 +90,9 @@
             @page-change="handlePageChange" 
           />
         </div>
-        
-        <!-- 右侧侧边栏 -->
-        <!-- 在右侧边栏中使用这些组件 -->
-        <div class="w-full md:w-1/3 mt-8 md:mt-0">
-          <!-- 分类列表 -->
-          <div class="mb-6">
-            <CategoryList
-              :categories="categories"
-              :loading="loadingCategories"
-              title="文章分类"
-            />
-          </div>
-          
-          <!-- 标签云 -->
-          <div>
-            <TagCloud
-              :tags="tags"
-              :loading="loadingTags"
-              title="标签云"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 页脚 -->
+      </section>
+    </main>
+
     <Footer />
   </div>
 </template>
@@ -85,12 +100,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Navbar from '../components/Navbar.vue';
-// import ArticleCard from '../components/ArticleCard.vue';
-import ArticleCardV2 from '../components/ArticleCardV2.vue'; // 引入新的
+import ArticleCardV2 from '../components/ArticleCardV2.vue'; // 使用新卡片
 import Pagination from '../components/Pagination.vue';
 import Footer from '../components/Footer.vue';
-import CategoryList from '../components/CategoryList.vue';
-import TagCloud from '../components/TagCloud.vue';
 import api from '../api';
 
 // 状态
@@ -98,11 +110,8 @@ const posts = ref([]);
 const loading = ref(true);
 const currentPage = ref(1);
 const totalPages = ref(1);
-const categories = ref([]);
-const tags = ref([]);
-const loadingCategories = ref(true);
-const loadingTags = ref(true);
-const isAdmin = ref(false); // 添加管理员状态检查
+const categories = ref([]); // 只需要分类，用于 Bento Grid
+const isAdmin = ref(false);
 
 // 检查是否为管理员
 const checkAdminStatus = () => {
@@ -121,40 +130,19 @@ const checkAdminStatus = () => {
 const fetchPosts = async (page = 1) => {
   try {
     loading.value = true;
-    const response = await api.getPosts({
-      page,
-      limit: 10
-    });
+    const response = await api.getPosts({ page, limit: 9 }); // Grid 布局每页 9 个比较好看
     
-    console.log('文章API响应:', response);
-    
-    // 适应不同的API响应格式
+    // 数据处理逻辑保持不变...
     if (Array.isArray(response)) {
-      // 如果直接返回数组
       posts.value = response;
-      currentPage.value = 1;
-      totalPages.value = 1;
     } else if (response.posts) {
-      // 如果返回带有posts字段的对象
       posts.value = response.posts;
       currentPage.value = response.pagination?.currentPage || 1;
       totalPages.value = response.pagination?.totalPages || 1;
     } else if (response.data) {
-      // 如果返回的是 { data: [...] } 格式
       posts.value = response.data;
-      currentPage.value = 1;
-      totalPages.value = 1;
     } else {
-      // 其他可能的格式
       posts.value = response || [];
-      currentPage.value = 1;
-      totalPages.value = 1;
-    }
-    
-    console.log('处理后的文章数据:', posts.value);
-    
-    if (posts.value.length === 0) {
-      console.warn('文章列表为空，可能是API返回格式不符合预期或没有文章');
     }
   } catch (error) {
     console.error('获取文章失败:', error);
@@ -164,46 +152,34 @@ const fetchPosts = async (page = 1) => {
   }
 };
 
-// 获取分类列表
+// 获取分类 (用于 Bento Grid)
 const fetchCategories = async () => {
   try {
-    loadingCategories.value = true;
     categories.value = await api.getCategories();
-    console.log('获取到的分类数据:', categories.value);
   } catch (error) {
     console.error('获取分类失败:', error);
-    categories.value = [];
-  } finally {
-    loadingCategories.value = false;
   }
 };
 
-// 获取标签列表
-const fetchTags = async () => {
-  try {
-    loadingTags.value = true;
-    tags.value = await api.getTags();
-    console.log('获取到的标签数据:', tags.value);
-  } catch (error) {
-    console.error('获取标签失败:', error);
-    tags.value = [];
-  } finally {
-    loadingTags.value = false;
-  }
-};
-
-// 分页处理
 const handlePageChange = (page) => {
   fetchPosts(page);
-  // 回到顶部
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// 组件挂载时获取数据
 onMounted(() => {
   fetchPosts();
   fetchCategories();
-  fetchTags();
-  checkAdminStatus(); // 检查管理员状态
+  checkAdminStatus();
 });
 </script>
+
+<style scoped>
+/* 简单的淡入动画 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+</style>
