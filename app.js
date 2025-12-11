@@ -36,7 +36,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // 启动服务器
 const PORT = process.env.PORT || 3000;
