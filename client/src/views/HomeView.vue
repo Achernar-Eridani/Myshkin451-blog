@@ -8,12 +8,12 @@
         <div class="md:col-span-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-2xl p-8 flex flex-col justify-center relative overflow-hidden group">
           <div class="relative z-10">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
-              Hello, I'm <span class="text-blue-600 dark:text-blue-500">Myshkin</span>.
+              Hello, I'm <span class="text-blue-600 dark:text-blue-500">Myshkin451</span>.
             </h1>
             <p class="text-lg text-gray-600 dark:text-gray-400 font-mono mb-6 max-w-lg">
-              > Backend Developer<br>
-              > History Enthusiast<br>
-              > Building AI Agents...
+              > Backend & AI Engineer<br>
+              > Focused on FastAPI, RAG, and Agents<br>
+              > Building tools I'd want as a developer
             </p>
             <router-link 
               v-if="isAdmin" 

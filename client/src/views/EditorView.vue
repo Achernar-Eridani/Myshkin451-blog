@@ -1,117 +1,134 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-gray-50 dark:bg-[#050505] transition-colors duration-300">
     <Navbar />
     
-    <div class="container mx-auto px-4 py-6">
-      <div class="bg-white rounded-lg shadow-sm border p-6">
-        <h1 class="text-2xl font-bold mb-6">写文章</h1>
+    <header class="bg-white/80 dark:bg-[#111]/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-16 z-40 transition-colors duration-300">
+      <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+        <h1 class="text-lg font-bold text-gray-900 dark:text-white flex items-center font-mono">
+          <span class="w-2.5 h-2.5 rounded-full mr-3 animate-pulse" :class="article.published ? 'bg-green-500' : 'bg-yellow-500'"></span>
+          {{ article.id ? 'EDIT POST' : 'NEW DRAFT' }}
+        </h1>
         
-        <!-- 文章标题 -->
-        <div class="mb-6">
-          <label for="title" class="block text-gray-700 text-sm font-bold mb-2">文章标题</label>
+        <div class="flex items-center space-x-3">
+          <button 
+            @click="router.back()" 
+            class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="saveArticle" 
+            :disabled="loading || !article.title"
+            class="flex items-center px-6 py-2 bg-black dark:bg-white text-white dark:text-black font-bold text-sm rounded-lg hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/10"
+          >
+            <svg v-if="loading" class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            {{ loading ? 'SAVING...' : 'PUBLISH' }}
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <div class="container mx-auto px-4 py-8">
+      <div v-if="error" class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm font-mono flex items-center">
+        <span class="mr-2 text-lg">!</span> {{ error }}
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
           <input 
-            id="title" 
             v-model="article.title" 
             type="text" 
-            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-            placeholder="请输入文章标题"
+            placeholder="Enter Title Here..." 
+            class="w-full bg-transparent text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-700 border-none focus:ring-0 px-0 leading-tight transition-colors duration-300"
           >
-        </div>
-        
-        <!-- 文章摘要 -->
-        <div class="mb-6">
-          <label for="excerpt" class="block text-gray-700 text-sm font-bold mb-2">文章摘要</label>
-          <textarea 
-            id="excerpt" 
-            v-model="article.excerpt" 
-            rows="2" 
-            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-            placeholder="请输入文章摘要（可选）"
-          ></textarea>
-        </div>
-        
-        <!-- Markdown编辑器 -->
-        <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2">文章内容</label>
-          <MarkdownEditor v-model="article.content" />
-        </div>
-        
-        <!-- 分类和标签 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <!-- 分类选择 -->
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">文章分类</label>
-            <select 
-              v-model="article.categoryId" 
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">请选择分类</option>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
-          </div>
           
-          <!-- 标签选择 -->
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">文章标签</label>
-            <div class="flex flex-wrap border rounded-lg p-2 min-h-10">
-              <span 
-                v-for="tagId in article.tagIds" 
-                :key="tagId" 
-                class="bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-2 flex items-center"
-              >
-                <span>{{ findTagName(tagId) }}</span>
-                <button @click="removeTag(tagId)" class="ml-1 text-blue-600 hover:text-blue-800">
-                  &times;
-                </button>
-              </span>
-              
-              <select 
-                @change="addTag" 
-                v-model="selectedTag" 
-                class="py-1 px-2 border-none focus:outline-none flex-grow min-w-[100px]"
-              >
-                <option value="">添加标签...</option>
-                <option 
-                  v-for="tag in availableTags" 
-                  :key="tag.id" 
-                  :value="tag.id"
-                >
-                  {{ tag.name }}
-                </option>
-              </select>
+          <div class="bg-white dark:bg-[#111] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm min-h-[600px] overflow-hidden transition-colors duration-300">
+             <div class="prose dark:prose-invert max-w-none p-2">
+               <MarkdownEditor v-model="article.content" class="min-h-[600px]" />
+             </div>
+          </div>
+        </div>
+        
+        <div class="space-y-6">
+          
+          <div class="bg-white dark:bg-[#111] rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-300">
+            <ImageUploader 
+              v-model="article.coverImage" 
+              label="Cover Image" 
+            />
+          </div>
+
+          <div class="bg-white dark:bg-[#111] rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm space-y-6 transition-colors duration-300">
+            
+            <div>
+              <label class="block text-xs font-mono font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Excerpt</label>
+              <textarea 
+                v-model="article.excerpt" 
+                rows="3" 
+                class="w-full bg-gray-50 dark:bg-[#1a1a1a] border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 transition-colors"
+                placeholder="Brief description for SEO..."
+              ></textarea>
             </div>
-          </div>
-        </div>
-        
-        <!-- 文章状态和操作按钮 -->
-        <div class="flex items-center justify-between">
-          <div>
-            <label class="inline-flex items-center">
-              <input 
-                type="checkbox" 
-                v-model="article.published" 
-                class="form-checkbox h-5 w-5 text-blue-600"
+
+            <div>
+              <label class="block text-xs font-mono font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Category</label>
+              <div class="relative">
+                <select 
+                  v-model="article.categoryId" 
+                  class="w-full bg-gray-50 dark:bg-[#1a1a1a] border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 appearance-none py-2.5 px-3 transition-colors"
+                >
+                  <option value="" disabled>Select a category</option>
+                  <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Tags</label>
+              <div class="flex flex-wrap gap-2 mb-3 min-h-[30px]">
+                <span 
+                  v-for="tagId in article.tagIds" 
+                  :key="tagId" 
+                  class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold font-mono bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                >
+                  #{{ findTagName(tagId) }}
+                  <button @click="removeTag(tagId)" class="ml-1.5 hover:text-blue-900 dark:hover:text-white transition-colors">&times;</button>
+                </span>
+              </div>
+              <div class="relative">
+                <select 
+                  v-model="selectedTag" 
+                  @change="addTag"
+                  class="w-full bg-gray-50 dark:bg-[#1a1a1a] border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 appearance-none py-2.5 px-3 transition-colors"
+                >
+                  <option value="">+ Add Tag</option>
+                  <option v-for="tag in availableTags" :key="tag.id" :value="tag.id">{{ tag.name }}</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-800">
+              <span class="text-sm font-bold text-gray-700 dark:text-gray-300 font-mono">PUBLISHED</span>
+              <button 
+                @click="article.published = !article.published"
+                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                :class="article.published ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-700'"
               >
-              <span class="ml-2 text-gray-700">发布文章</span>
-            </label>
+                <span 
+                  class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm"
+                  :class="article.published ? 'translate-x-6' : 'translate-x-1'"
+                />
+              </button>
+            </div>
+
           </div>
-          
-          <div class="flex space-x-2">
-            <button 
-              @click="saveArticle" 
-              :disabled="loading || !article.title"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
-            >
-              {{ loading ? '保存中...' : '保存文章' }}
-            </button>
-          </div>
-        </div>
-        
-        <!-- 错误提示 -->
-        <div v-if="error" class="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {{ error }}
         </div>
       </div>
     </div>
@@ -126,42 +143,42 @@ import { useRouter, useRoute } from 'vue-router';
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
+import ImageUploader from '../components/ImageUploader.vue';
 import api from '../api';
 
-// 路由相关
 const router = useRouter();
 const route = useRoute();
 
-// 状态变量
+// 状态
 const loading = ref(false);
 const error = ref('');
 const categories = ref([]);
 const tags = ref([]);
 const selectedTag = ref('');
 
-// 文章数据 - 移除coverImage字段
+// 文章数据模型
 const article = reactive({
   id: null,
   title: '',
   content: '',
   excerpt: '',
+  coverImage: '', // 存储封面图片路径
   categoryId: '',
   tagIds: [],
   published: false
 });
 
-// 计算属性：可用标签（排除已选）
+// 计算属性：过滤出未选中的标签
 const availableTags = computed(() => {
   return tags.value.filter(tag => !article.tagIds.includes(tag.id));
 });
 
-// 找到标签名称
+// 辅助函数：根据ID找标签名
 const findTagName = (tagId) => {
   const tag = tags.value.find(t => t.id === tagId);
-  return tag ? tag.name : '未知标签';
+  return tag ? tag.name : 'Unknown';
 };
 
-// 添加标签
 const addTag = () => {
   if (selectedTag.value && !article.tagIds.includes(selectedTag.value)) {
     article.tagIds.push(selectedTag.value);
@@ -169,15 +186,15 @@ const addTag = () => {
   }
 };
 
-// 移除标签
 const removeTag = (tagId) => {
   article.tagIds = article.tagIds.filter(id => id !== tagId);
 };
 
-// 保存文章 - 移除coverImage相关代码
+// 保存文章
 const saveArticle = async () => {
   if (!article.title.trim()) {
-    error.value = '文章标题不能为空';
+    error.value = 'Title is required';
+    window.scrollTo(0, 0);
     return;
   }
   
@@ -185,60 +202,35 @@ const saveArticle = async () => {
   error.value = '';
   
   try {
-    let response;
-    
     const postData = {
       title: article.title,
       content: article.content,
       excerpt: article.excerpt || null,
+      coverImage: article.coverImage || null, // 这里的路径来自 ImageUploader
       categoryId: article.categoryId || null,
       tagIds: article.tagIds,
       status: article.published ? 'published' : 'draft'
     };
     
+    let response;
     if (article.id) {
-      // 更新现有文章
       response = await api.updatePost(article.id, postData);
     } else {
-      // 创建新文章
       response = await api.createPost(postData);
     }
     
-    console.log('文章保存成功:', response);
-    
-    // 保存成功，跳转到文章详情页
+    // 跳转逻辑
     router.push(`/posts/${response.id}`);
   } catch (err) {
-    console.error('保存文章失败:', err);
-    error.value = err.response?.data?.message || '保存文章失败，请重试';
+    console.error('Save failed:', err);
+    error.value = err.response?.data?.message || 'Failed to save article.';
+    window.scrollTo(0, 0);
   } finally {
     loading.value = false;
   }
 };
 
-// 获取分类列表
-const fetchCategories = async () => {
-  try {
-    categories.value = await api.getCategories();
-    console.log('获取到的分类数据:', categories.value);
-  } catch (err) {
-    console.error('获取分类失败:', err);
-    error.value = '获取分类失败';
-  }
-};
-
-// 获取标签列表
-const fetchTags = async () => {
-  try {
-    tags.value = await api.getTags();
-    console.log('获取到的标签数据:', tags.value);
-  } catch (err) {
-    console.error('获取标签失败:', err);
-    error.value = '获取标签失败';
-  }
-};
-
-// 加载现有文章 - 移除coverImage相关代码
+// 加载文章详情 (编辑模式)
 const fetchArticle = async (id) => {
   try {
     const post = await api.getPostById(id);
@@ -247,42 +239,52 @@ const fetchArticle = async (id) => {
     article.title = post.title;
     article.content = post.content;
     article.excerpt = post.excerpt || '';
+    article.coverImage = post.coverImage || ''; // 回显封面
     article.categoryId = post.categoryId || '';
     article.published = post.status === 'published';
     
-    // 处理标签
+    // 处理标签回显
     if (post.tags && Array.isArray(post.tags)) {
       article.tagIds = post.tags.map(tag => tag.id);
     }
   } catch (err) {
-    console.error('获取文章失败:', err);
-    error.value = '获取文章失败，请重试';
+    console.error('Fetch failed:', err);
+    error.value = 'Failed to load article.';
   }
 };
 
-// 组件挂载时加载数据
+const fetchData = async () => {
+  try {
+    const [cats, allTags] = await Promise.all([
+      api.getCategories(),
+      api.getTags()
+    ]);
+    categories.value = cats;
+    tags.value = allTags;
+  } catch (err) {
+    console.error('Init data failed:', err);
+  }
+};
+
 onMounted(async () => {
-  // 检查用户权限
+  // 1. 权限检查
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
+  // 兼容 role='admin' 或 isAdmin=true
+  const isAdmin = user && (user.isAdmin === true || user.role === 'admin');
   
-  // 添加管理员权限检查
-  if (user && (user.id === 1 || user.id === 2)) {
-    // 由于后端没有返回isAdmin字段，临时根据ID判断
-    console.log('用户ID为管理员账户，允许访问');
-  } else {
-    console.warn('非管理员用户，重定向到首页');
+  if (!isAdmin) {
+    // 简单粗暴，非管理员直接踢回首页
     router.push('/');
     return;
   }
-  
-  // 获取分类和标签
-  await Promise.all([fetchCategories(), fetchTags()]);
-  
-  // 如果是编辑模式，加载文章
-  const articleId = route.params.id;
-  if (articleId) {
-    await fetchArticle(articleId);
+
+  // 2. 加载基础数据
+  await fetchData();
+
+  // 3. 如果是编辑模式，加载文章
+  if (route.params.id) {
+    await fetchArticle(route.params.id);
   }
 });
 </script>
