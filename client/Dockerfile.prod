@@ -4,6 +4,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+# 在这里注入生产环境 API 地址 
+ARG VITE_API_URL
+ENV VITE_API_URL=https://myshkin451.com/api
+
 RUN npm run build
 
 # Serve stage
