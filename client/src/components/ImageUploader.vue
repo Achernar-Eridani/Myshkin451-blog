@@ -86,26 +86,36 @@ const dragover = ref(false);
 const error = ref("");
 const previewUrl = ref("");
 
-// 初始化回显逻辑
+const getFullImageUrl = (path) => {
+  if (!path) return '';
+  
+  // 1. 如果已经是完整的 http 链接，直接用
+  if (path.startsWith('http')) return path;
+  
+  // 2. 如果是静态资源 (/uploads 开头)，直接拼域名前缀，不要拼 /api
+  // 结果会是: https://myshkin451.com/uploads/posts/xxx.jpg
+  if (path.startsWith('/uploads')) {
+    return `${window.location.origin}${path}`;
+  }
+
+  // 3. 其他情况才拼 API 地址
+  const baseUrl = import.meta.env.VITE_API_URL || '';
+  return `${baseUrl}${path}`;
+};
+
+// 初始化回显
 onMounted(() => {
   if (props.modelValue) {
-    // 如果是完整 URL 直接用，如果是相对路径则拼上前缀
-    const isAbsolute = props.modelValue.startsWith('http');
-    // 注意：这里需要根据你的环境变量调整，如果没有定义 VITE_API_URL，默认用空或后端地址
-    const baseUrl = import.meta.env.VITE_API_URL || ''; 
-    previewUrl.value = isAbsolute ? props.modelValue : `${baseUrl}${props.modelValue}`;
+    previewUrl.value = getFullImageUrl(props.modelValue);
   }
 });
 
-// 监听外部 modelValue 变化（例如重置表单时）
+// 监听变化
 watch(() => props.modelValue, (newVal) => {
   if (!newVal) {
     previewUrl.value = "";
   } else if (newVal !== previewUrl.value) {
-    // 只有当新值和当前预览不一致时才更新（避免循环）
-    const isAbsolute = newVal.startsWith('http');
-    const baseUrl = import.meta.env.VITE_API_URL || '';
-    previewUrl.value = isAbsolute ? newVal : `${baseUrl}${newVal}`;
+    previewUrl.value = getFullImageUrl(newVal);
   }
 });
 
@@ -124,21 +134,15 @@ const onDrop = (e) => {
 };
 
 const handleUpload = async (file) => {
-  if (!file.type.startsWith("image/")) {
-    error.value = "File must be an image.";
-    return;
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    error.value = "File size exceeds 5MB.";
-    return;
-  }
+  // ... (保留你之前的校验逻辑) ...
+  if (!file.type.startsWith("image/")) { error.value = "File must be an image."; return; }
+  if (file.size > 20 * 1024 * 1024) { error.value = "File size exceeds 20MB."; return; } // 改成 20M 匹配服务器设置
 
-  error.value = "";
   uploading.value = true;
+  error.value = "";
 
   try {
     const fd = new FormData();
-    // 根据你的 API 定义调整字段名
     const fieldName = props.uploadType === 'avatar' ? 'avatar' : 'image';
     fd.append(fieldName, file);
 
@@ -146,25 +150,19 @@ const handleUpload = async (file) => {
     if (props.uploadType === 'avatar') {
       res = await api.uploadAvatar(fd);
     } else {
-      // 默认使用通用的图片上传，返回 { url, path }
       res = await api.uploadPostImage(fd);
     }
 
-    // 解析返回值：你的 API 返回 { url, path }
-    // url: 绝对路径 (用于预览)
-    // path: 相对路径 (用于存库)
     const { url, path } = res; 
-
-    // 更新预览
-    previewUrl.value = url;
     
-    // 向父组件更新值 (通常存 path 到数据库比较灵活)
+    // 更新预览 (使用 path 走一遍 getFullImageUrl 逻辑，或者直接用 url)
+    previewUrl.value = url; 
     emit("update:modelValue", path); 
     emit("upload-success", url);
 
   } catch (err) {
     console.error(err);
-    error.value = "Upload failed. Please try again.";
+    error.value = "Upload failed.";
     emit("upload-error", err);
   } finally {
     uploading.value = false;
