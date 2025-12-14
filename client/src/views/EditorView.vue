@@ -219,8 +219,17 @@ const saveArticle = async () => {
       response = await api.createPost(postData);
     }
     
-    // 跳转逻辑
-    router.push(`/posts/${response.id}`);
+    // 优先找 response.id，找不到就找 response.post.id，再找不到找 response.data.id
+    const newId = response.id || (response.post && response.post.id) || (response.data && response.data.id);
+    
+    if (newId) {
+      router.push(`/posts/${newId}`);
+    } else {
+      console.error('无法获取新文章ID，后端返回:', response);
+      // 如果获取失败，至少跳回首页或管理页，不要跳去 404
+      router.push('/admin'); 
+    }
+    
   } catch (err) {
     console.error('Save failed:', err);
     error.value = err.response?.data?.message || 'Failed to save article.';

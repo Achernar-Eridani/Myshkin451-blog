@@ -30,6 +30,13 @@ const routes = [
     component: () => import('../views/EditorView.vue'),
     meta: { requiresAuth: true }
   },
+
+  {
+    path: '/edit/:id',
+    name: 'edit-post',
+    component: () => import('../views/EditorView.vue'),
+    meta: { requiresAuth: true } 
+  },
   {
     path: '/guestbook',
     name: 'guestbook',
@@ -69,7 +76,6 @@ const routes = [
     name: 'tag-detail',
     component: () => import('../views/TagDetailView.vue')
   },
-  // 在 client/src/router/index.js 中添加管理页面路由
 
 // 管理后台路由
 {
