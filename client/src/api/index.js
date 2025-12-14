@@ -51,6 +51,19 @@ const apiService = {
     }
   },
   
+// 删除文章
+  async deletePost(id) {
+    try {
+      console.log(`Deleting post: ${id}`);
+      const response = await api.delete(`/posts/${id}`);
+      console.log('Delete post response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('删除文章失败:', error);
+      throw error;
+    }
+  },
+
   // 获取分类列表
   async getCategories() {
     try {
@@ -373,8 +386,6 @@ async uploadPostImage(formData) {
     localStorage.removeItem('user');
     console.log('User logged out');
   },
-
-  // 在 client/src/api/index.js 中添加以下方法
 
 // 获取管理统计数据
 async getAdminStats() {
