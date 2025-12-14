@@ -114,7 +114,19 @@
               </div>
             </div>
 
-            <div class="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-800">
+            <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+              <label class="block text-xs font-mono font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">
+                Publish Date
+              </label>
+              <input 
+                type="datetime-local" 
+                v-model="article.createdAt"
+                class="w-full bg-gray-50 dark:bg-[#1a1a1a] border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 dark:text-gray-300 transition-colors"
+              >
+              <p class="text-[10px] text-gray-400 mt-1 font-mono">Leave blank for current time.</p>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
               <span class="text-sm font-bold text-gray-700 dark:text-gray-300 font-mono">PUBLISHED</span>
               <button 
                 @click="article.published = !article.published"
@@ -162,18 +174,17 @@ const article = reactive({
   title: '',
   content: '',
   excerpt: '',
-  coverImage: '', // 存储封面图片路径
+  coverImage: '',
   categoryId: '',
   tagIds: [],
-  published: false
+  published: false,
+  createdAt: '' // 用于绑定日期选择器
 });
 
-// 计算属性：过滤出未选中的标签
 const availableTags = computed(() => {
   return tags.value.filter(tag => !article.tagIds.includes(tag.id));
 });
 
-// 辅助函数：根据ID找标签名
 const findTagName = (tagId) => {
   const tag = tags.value.find(t => t.id === tagId);
   return tag ? tag.name : 'Unknown';
@@ -190,7 +201,6 @@ const removeTag = (tagId) => {
   article.tagIds = article.tagIds.filter(id => id !== tagId);
 };
 
-// 保存文章
 const saveArticle = async () => {
   if (!article.title.trim()) {
     error.value = 'Title is required';
@@ -206,10 +216,12 @@ const saveArticle = async () => {
       title: article.title,
       content: article.content,
       excerpt: article.excerpt || null,
-      coverImage: article.coverImage || null, // 这里的路径来自 ImageUploader
+      coverImage: article.coverImage || null,
       categoryId: article.categoryId || null,
       tagIds: article.tagIds,
-      status: article.published ? 'published' : 'draft'
+      status: article.published ? 'published' : 'draft',
+      // 如果有值，转换为 ISO 格式传给后端；如果为空，传 null
+      createdAt: article.createdAt ? new Date(article.createdAt).toISOString() : null
     };
     
     let response;
@@ -219,15 +231,14 @@ const saveArticle = async () => {
       response = await api.createPost(postData);
     }
     
-    // 优先找 response.id，找不到就找 response.post.id，再找不到找 response.data.id
+    // 修复 ID 获取逻辑：兼容 post 对象包裹的情况
     const newId = response.id || (response.post && response.post.id) || (response.data && response.data.id);
     
     if (newId) {
       router.push(`/posts/${newId}`);
     } else {
-      console.error('无法获取新文章ID，后端返回:', response);
-      // 如果获取失败，至少跳回首页或管理页，不要跳去 404
-      router.push('/admin'); 
+      console.error('无法获取文章ID，返回数据:', response);
+      router.push('/admin'); // 失败回退到管理页
     }
     
   } catch (err) {
@@ -239,7 +250,6 @@ const saveArticle = async () => {
   }
 };
 
-// 加载文章详情 (编辑模式)
 const fetchArticle = async (id) => {
   try {
     const post = await api.getPostById(id);
@@ -248,11 +258,20 @@ const fetchArticle = async (id) => {
     article.title = post.title;
     article.content = post.content;
     article.excerpt = post.excerpt || '';
-    article.coverImage = post.coverImage || ''; // 回显封面
+    article.coverImage = post.coverImage || '';
     article.categoryId = post.categoryId || '';
     article.published = post.status === 'published';
     
-    // 处理标签回显
+    // 时间格式化逻辑
+    if (post.createdAt) {
+      // 必须将 UTC 时间转换为本地时间的 YYYY-MM-DDTHH:mm 格式
+      // 否则 datetime-local 输入框不会显示值
+      const date = new Date(post.createdAt);
+      const offset = date.getTimezoneOffset() * 60000; // 本地时区偏移量
+      const localISOTime = (new Date(date - offset)).toISOString().slice(0, 16);
+      article.createdAt = localISOTime;
+    }
+
     if (post.tags && Array.isArray(post.tags)) {
       article.tagIds = post.tags.map(tag => tag.id);
     }
@@ -276,22 +295,17 @@ const fetchData = async () => {
 };
 
 onMounted(async () => {
-  // 1. 权限检查
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
-  // 兼容 role='admin' 或 isAdmin=true
   const isAdmin = user && (user.isAdmin === true || user.role === 'admin');
   
   if (!isAdmin) {
-    // 简单粗暴，非管理员直接踢回首页
     router.push('/');
     return;
   }
 
-  // 2. 加载基础数据
   await fetchData();
 
-  // 3. 如果是编辑模式，加载文章
   if (route.params.id) {
     await fetchArticle(route.params.id);
   }
