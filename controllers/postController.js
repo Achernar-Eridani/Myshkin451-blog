@@ -93,7 +93,9 @@ exports.createPost = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
     try {
-        // 👇 1. 加入 coverImage 和 createdAt
+        console.log('--- UPDATE REQUEST RECEIVED ---'); 
+        console.log('Target createdAt:', req.body.createdAt);
+        
         const { title, content, excerpt, status, categoryId, tagIds, coverImage, createdAt } = req.body;
         const post = await Post.findByPk(req.params.id);
     
@@ -105,23 +107,25 @@ exports.updatePost = async (req, res) => {
             return res.status(403).json({ message: '没有权限修改此文章' });
         }
     
-        // 👇 2. 构建更新对象
-        const updateData = {
-            title,
-            content,
-            excerpt,
-            status,
-            categoryId: categoryId || post.categoryId,
-            coverImage: coverImage // 保存封面
-        };
+        // 设置常规字段 改用直接赋值，比构建 updateData 对象更直观
+        post.title = title;
+        post.content = content;
+        post.excerpt = excerpt;
+        post.status = status;
+        post.categoryId = categoryId || post.categoryId;
+        post.coverImage = coverImage;
 
-        // 👇 3. 上帝模式：只有当用户真的传了时间才更新它，否则保持原样
+        //  暴力强制更新时间 
+        // 普通的 update() 会被 Sequelize 过滤，必须用 setDataValue 绕过保护
         if (createdAt) {
-            updateData.createdAt = createdAt;
+            post.setDataValue('createdAt', createdAt);
+            console.log('>>> FORCE UPDATING createdAt to:', createdAt);
         }
     
-        await post.update(updateData);
+        // 执行保存
+        await post.save();
     
+        // 处理标签
         if (tagIds) {
             await post.setTags([]);
             if (tagIds.length > 0) {
@@ -129,6 +133,7 @@ exports.updatePost = async (req, res) => {
             }
         }
     
+        // 返回结果
         const updatedPost = await Post.findByPk(post.id, {
             include: [
                 { model: User, as: 'author', attributes: ['id', 'username'] },
@@ -139,6 +144,7 @@ exports.updatePost = async (req, res) => {
     
         res.json({ message: '文章更新成功', post: updatedPost });
     } catch (error) {
+        console.error('Update Error:', error); // 建议加上错误日志
         res.status(500).json({ message: '服务器错误', error: error.message });
     }
 };
