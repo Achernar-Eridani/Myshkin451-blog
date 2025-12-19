@@ -78,6 +78,8 @@ import Footer from '../components/Footer.vue';
 import CommentSection from '../components/CommentSection.vue';
 import api from '../api';
 import MarkdownIt from 'markdown-it';
+import markdownItKatex from 'markdown-it-katex';
+import 'katex/dist/katex.css';
 // 引入 highlight.js 样式 (建议在 main.js 全局引入，不过这里保留以防万一)
 import 'highlight.js/styles/atom-one-dark.css'; 
 
@@ -95,6 +97,8 @@ const md = new MarkdownIt({
     return ''; 
   }
 });
+
+md.use(markdownItKatex);
 
 const post = ref(null);
 const loading = ref(true);
