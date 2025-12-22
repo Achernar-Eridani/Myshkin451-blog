@@ -1,8 +1,16 @@
 <template>
   <nav
-    class="sticky top-0 z-50 border-b border-zinc-200/70 bg-white/70 backdrop-blur
-           dark:border-zinc-800/70 dark:bg-zinc-950/70"
+    class="sticky top-0 z-50 w-full border-b border-zinc-200/70 bg-white/65 backdrop-blur
+           dark:border-zinc-800/70 dark:bg-zinc-950/60"
   >
+    <!-- scroll progress -->
+    <div class="h-[2px] w-full bg-transparent">
+      <div
+        class="h-[2px] bg-gradient-to-r from-blue-600 via-sky-500 to-transparent"
+        :style="{ width: `${scrollProgress}%` }"
+      ></div>
+    </div>
+
     <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
       <!-- Brand -->
       <router-link to="/" class="group flex items-center gap-3">
@@ -14,12 +22,8 @@
         </div>
 
         <div class="hidden sm:block leading-tight">
-          <div class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Myshkin451
-          </div>
-          <div class="text-xs text-zinc-500 dark:text-zinc-400">
-            notes on backend · rag · tools
-          </div>
+          <div class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Myshkin451</div>
+          <div class="text-xs text-zinc-500 dark:text-zinc-400">backend · rag · tooling</div>
         </div>
       </router-link>
 
@@ -40,7 +44,6 @@
             <SearchBar />
           </div>
 
-          <!-- Theme -->
           <button
             @click="toggleTheme"
             class="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white/60 text-zinc-700
@@ -48,24 +51,17 @@
             aria-label="Toggle theme"
           >
             <svg v-if="isDark" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 3v2"></path>
-              <path d="M12 19v2"></path>
-              <path d="M4.22 4.22l1.42 1.42"></path>
-              <path d="M18.36 18.36l1.42 1.42"></path>
-              <path d="M3 12h2"></path>
-              <path d="M19 12h2"></path>
-              <path d="M4.22 19.78l1.42-1.42"></path>
-              <path d="M18.36 5.64l1.42-1.42"></path>
+              <path d="M12 3v2"></path><path d="M12 19v2"></path>
+              <path d="M4.22 4.22l1.42 1.42"></path><path d="M18.36 18.36l1.42 1.42"></path>
+              <path d="M3 12h2"></path><path d="M19 12h2"></path>
+              <path d="M4.22 19.78l1.42-1.42"></path><path d="M18.36 5.64l1.42-1.42"></path>
               <circle cx="12" cy="12" r="4"></circle>
             </svg>
             <svg v-else class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path
-                d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"
-              ></path>
+              <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"></path>
             </svg>
           </button>
 
-          <!-- Account -->
           <div v-if="isLoggedIn" class="relative" ref="profileMenuRef">
             <button
               @click="toggleProfileMenu"
@@ -101,21 +97,14 @@
 
               <router-link to="/profile" class="menu-item">个人资料</router-link>
               <router-link to="/my-comments" class="menu-item">我的评论</router-link>
-
               <router-link v-if="isAdmin" to="/write" class="menu-item">写文章</router-link>
               <router-link v-if="isAdmin" to="/admin" class="menu-item">管理后台</router-link>
-
-              <button @click="logout" class="menu-item w-full text-left text-red-600 dark:text-red-400">
-                退出登录
-              </button>
+              <button @click="logout" class="menu-item w-full text-left text-red-600 dark:text-red-400">退出登录</button>
             </div>
           </div>
 
           <div v-else class="flex items-center gap-2">
-            <router-link
-              to="/login"
-              class="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
-            >
+            <router-link to="/login" class="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white">
               登录
             </router-link>
             <router-link
@@ -137,13 +126,10 @@
         aria-label="Toggle menu"
       >
         <svg v-if="!showMobileMenu" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 6h16"></path>
-          <path d="M4 12h16"></path>
-          <path d="M4 18h16"></path>
+          <path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>
         </svg>
         <svg v-else class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 6 6 18"></path>
-          <path d="M6 6l12 12"></path>
+          <path d="M18 6 6 18"></path><path d="M6 6l12 12"></path>
         </svg>
       </button>
     </div>
@@ -178,22 +164,12 @@
 
           <div v-if="!isLoggedIn" class="flex items-center gap-3">
             <router-link to="/login" class="text-sm text-zinc-600 dark:text-zinc-300" @click="closeMobileMenu">登录</router-link>
-            <router-link
-              to="/register"
-              class="text-sm font-medium text-zinc-900 dark:text-zinc-50"
-              @click="closeMobileMenu"
-            >
+            <router-link to="/register" class="text-sm font-medium text-zinc-900 dark:text-zinc-50" @click="closeMobileMenu">
               注册
             </router-link>
           </div>
 
-          <button
-            v-else
-            @click="logout"
-            class="text-sm font-medium text-red-600 dark:text-red-400"
-          >
-            退出登录
-          </button>
+          <button v-else @click="logout" class="text-sm font-medium text-red-600 dark:text-red-400">退出登录</button>
         </div>
       </div>
     </div>
@@ -217,6 +193,8 @@ const isLoggedIn = ref(false);
 const userName = ref('用户');
 const userAvatar = ref(null);
 const isAdmin = ref(false);
+
+const scrollProgress = ref(0);
 
 const navLinkBase = 'inline-flex items-center rounded-md px-2 py-1.5 text-sm transition-colors';
 
@@ -270,13 +248,11 @@ const checkUserStatus = () => {
   try {
     const userStr = localStorage.getItem('user');
     if (!userStr) return;
-
     const userData = JSON.parse(userStr);
     userName.value = userData.username || '用户';
     userAvatar.value = userData.avatar || null;
     isAdmin.value = userData.isAdmin === true || userData.role === 'admin';
   } catch (e) {
-    console.error('解析用户数据失败:', e);
     userName.value = '用户';
     userAvatar.value = null;
     isAdmin.value = false;
@@ -297,17 +273,9 @@ const logout = () => {
   router.push('/');
 };
 
-const toggleMobileMenu = () => {
-  showMobileMenu.value = !showMobileMenu.value;
-};
-
-const closeMobileMenu = () => {
-  showMobileMenu.value = false;
-};
-
-const toggleProfileMenu = () => {
-  showProfileMenu.value = !showProfileMenu.value;
-};
+const toggleMobileMenu = () => { showMobileMenu.value = !showMobileMenu.value; };
+const closeMobileMenu = () => { showMobileMenu.value = false; };
+const toggleProfileMenu = () => { showProfileMenu.value = !showProfileMenu.value; };
 
 const handleClickOutside = (event) => {
   if (profileMenuRef.value && !profileMenuRef.value.contains(event.target)) {
@@ -316,9 +284,15 @@ const handleClickOutside = (event) => {
 };
 
 const handleStorageChange = (event) => {
-  if (event.key === 'token' || event.key === 'user') {
-    checkUserStatus();
-  }
+  if (event.key === 'token' || event.key === 'user') checkUserStatus();
+};
+
+const handleScroll = () => {
+  const doc = document.documentElement;
+  const scrollTop = doc.scrollTop || document.body.scrollTop;
+  const scrollHeight = doc.scrollHeight - doc.clientHeight;
+  const p = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+  scrollProgress.value = Math.min(100, Math.max(0, p));
 };
 
 watch(
@@ -332,7 +306,6 @@ watch(
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme');
   const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
   if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
     isDark.value = true;
     document.documentElement.classList.add('dark');
@@ -342,13 +315,17 @@ onMounted(() => {
   }
 
   checkUserStatus();
+  handleScroll();
+
   document.addEventListener('click', handleClickOutside);
   window.addEventListener('storage', handleStorageChange);
+  window.addEventListener('scroll', handleScroll, { passive: true });
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
   window.removeEventListener('storage', handleStorageChange);
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
@@ -360,13 +337,7 @@ onUnmounted(() => {
   color: rgb(63 63 70);
   transition: background-color 150ms ease, color 150ms ease;
 }
-.menu-item:hover {
-  background: rgb(244 244 245);
-}
-:global(.dark) .menu-item {
-  color: rgb(228 228 231);
-}
-:global(.dark) .menu-item:hover {
-  background: rgba(24, 24, 27, 0.7);
-}
+.menu-item:hover { background: rgb(244 244 245); }
+:global(.dark) .menu-item { color: rgb(228 228 231); }
+:global(.dark) .menu-item:hover { background: rgba(24, 24, 27, 0.7); }
 </style>
