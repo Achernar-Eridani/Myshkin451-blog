@@ -1,42 +1,37 @@
 <template>
-  <footer class="bg-white dark:bg-[#050505] border-t border-gray-200 dark:border-gray-800 pt-20 pb-10 transition-colors duration-500">
-    <div class="container mx-auto px-6 max-w-6xl">
-      
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-        <div class="md:col-span-2 space-y-6">
-          <h4 class="font-serif text-2xl font-bold">Myshkin451</h4>
-          <p class="text-gray-500 dark:text-gray-400 max-w-sm leading-relaxed">
-            A digital garden exploring the intersection of backend engineering, distributed systems, and artificial intelligence.
-          </p>
-        </div>
-        
+  <footer class="border-t border-zinc-200/70 bg-white/50 py-12 dark:border-zinc-800/70 dark:bg-zinc-950/40">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <h5 class="font-mono text-xs font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Navigation</h5>
-          <ul class="space-y-3 text-sm text-gray-500 dark:text-gray-400">
-            <li><router-link to="/" class="hover:text-black dark:hover:text-white transition-colors">Home</router-link></li>
-            <li><router-link to="/categories" class="hover:text-black dark:hover:text-white transition-colors">Categories</router-link></li>
-            <li><router-link to="/guestbook" class="hover:text-black dark:hover:text-white transition-colors">Guestbook</router-link></li>
-          </ul>
+          <div class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Myshkin451</div>
+          <div class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
+            &copy; {{ new Date().getFullYear() }} · Built with Node.js & Vue 3
+          </div>
         </div>
 
-        <div>
-          <h5 class="font-mono text-xs font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Social</h5>
-          <ul class="space-y-3 text-sm text-gray-500 dark:text-gray-400">
-            <li><a href="https://github.com/Achernar-Eridani" target="_blank" class="hover:text-black dark:hover:text-white transition-colors">GitHub</a></li>
-            <li><a href="#" class="hover:text-black dark:hover:text-white transition-colors">RSS Feed</a></li>
-          </ul>
+        <div class="flex items-center gap-4">
+          <a
+            href="https://github.com/Achernar-Eridani"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-4 py-2 text-sm text-zinc-800
+                   transition hover:bg-white dark:border-zinc-800 dark:bg-zinc-950/40 dark:text-zinc-200 dark:hover:bg-zinc-900/60"
+          >
+            GitHub
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.7-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+
+          <div class="text-xs text-zinc-500 dark:text-zinc-400">
+            Clean layout, readable typography.
+          </div>
         </div>
       </div>
-
-      <div class="flex flex-col md:flex-row justify-between items-end border-t border-gray-100 dark:border-gray-800 pt-10">
-        <div class="text-[10vw] leading-none font-bold text-gray-100 dark:text-[#111] select-none pointer-events-none -ml-2">
-          M/451
-        </div>
-        <div class="text-xs font-mono text-gray-400 mb-2">
-          &copy; {{ new Date().getFullYear() }} SHENZHEN / HANGZHOU.
-        </div>
-      </div>
-
     </div>
   </footer>
 </template>

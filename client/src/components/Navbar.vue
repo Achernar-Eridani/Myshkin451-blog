@@ -1,65 +1,199 @@
 <template>
-  <nav class="sticky top-0 z-50 w-full bg-white/80 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 transition-colors duration-500">
-    <div class="container mx-auto px-6 h-14 flex items-center justify-between">
-      
-      <router-link to="/" class="flex items-baseline gap-1 group">
-        <span class="font-serif text-xl font-bold tracking-tight text-gray-900 dark:text-white">Myshkin</span>
-        <span class="font-mono text-sm text-blue-600 dark:text-blue-500">451</span>
-      </router-link>
-
-      <div class="hidden md:flex items-center gap-8">
-        <div class="flex items-center gap-6 text-sm font-medium">
-          <router-link v-for="link in navLinks" :key="link.path" :to="link.path" 
-            class="relative py-1 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-px after:bg-black dark:after:bg-white after:transition-all hover:after:w-full">
-            {{ link.name }}
-          </router-link>
-          
-          <router-link v-if="isAdmin" to="/admin" class="text-xs font-mono text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-900 px-2 py-0.5 rounded">
-            CMD
-          </router-link>
+  <nav
+    class="sticky top-0 z-50 border-b border-zinc-200/70 bg-white/70 backdrop-blur
+           dark:border-zinc-800/70 dark:bg-zinc-950/70"
+  >
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <!-- Brand -->
+      <router-link to="/" class="group flex items-center gap-3">
+        <div
+          class="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-900 shadow-sm
+                 transition-colors group-hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:group-hover:bg-zinc-900/40"
+        >
+          <span class="text-sm font-semibold tracking-tight">M</span>
         </div>
 
-        <div class="w-px h-4 bg-gray-200 dark:bg-gray-800"></div>
-        <div class="w-32"><SearchBar /></div>
+        <div class="hidden sm:block leading-tight">
+          <div class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Myshkin451
+          </div>
+          <div class="text-xs text-zinc-500 dark:text-zinc-400">
+            notes on backend · rag · tools
+          </div>
+        </div>
+      </router-link>
 
-        <div class="flex items-center gap-4">
-          <button @click="toggleTheme" class="text-gray-400 hover:text-black dark:hover:text-white transition-colors">
-            <svg v-if="isDark" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <svg v-else class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <!-- Desktop -->
+      <div class="hidden md:flex items-center gap-6">
+        <div class="flex items-center gap-1">
+          <router-link to="/" :class="linkClass('/')">首页</router-link>
+          <router-link to="/categories" :class="linkClass('/categories')">分类</router-link>
+          <router-link to="/tags" :class="linkClass('/tags')">标签</router-link>
+          <router-link to="/guestbook" :class="linkClass('/guestbook')">留言板</router-link>
+
+          <router-link v-if="isAdmin" to="/admin" :class="linkClass('/admin')">后台</router-link>
+          <router-link v-if="isAdmin" to="/write" :class="linkClass('/write')">写文章</router-link>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden lg:block w-[260px]">
+            <SearchBar />
+          </div>
+
+          <!-- Theme -->
+          <button
+            @click="toggleTheme"
+            class="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white/60 text-zinc-700
+                   transition-colors hover:bg-white dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-200 dark:hover:bg-zinc-900/70"
+            aria-label="Toggle theme"
+          >
+            <svg v-if="isDark" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v2"></path>
+              <path d="M12 19v2"></path>
+              <path d="M4.22 4.22l1.42 1.42"></path>
+              <path d="M18.36 18.36l1.42 1.42"></path>
+              <path d="M3 12h2"></path>
+              <path d="M19 12h2"></path>
+              <path d="M4.22 19.78l1.42-1.42"></path>
+              <path d="M18.36 5.64l1.42-1.42"></path>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>
+            <svg v-else class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"
+              ></path>
+            </svg>
           </button>
 
+          <!-- Account -->
           <div v-if="isLoggedIn" class="relative" ref="profileMenuRef">
-            <button @click="toggleProfileMenu" class="block w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 overflow-hidden hover:ring-2 ring-gray-400 dark:ring-gray-600 transition-all">
-               <img v-if="userAvatar" :src="userAvatar" class="w-full h-full object-cover" />
-               <div v-else class="w-full h-full flex items-center justify-center text-xs font-bold text-gray-500">?</div>
+            <button
+              @click="toggleProfileMenu"
+              class="flex items-center gap-2 rounded-full border border-zinc-200 bg-white/60 pl-1 pr-3 py-1.5
+                     transition-colors hover:bg-white dark:border-zinc-800 dark:bg-zinc-900/40 dark:hover:bg-zinc-900/70"
+            >
+              <img
+                :src="userAvatar || '/img/default-avatar.png'"
+                class="h-7 w-7 rounded-full object-cover border border-zinc-200 dark:border-zinc-800 bg-zinc-100"
+                alt="Avatar"
+              />
+              <span class="max-w-[110px] truncate text-sm text-zinc-700 dark:text-zinc-200">
+                {{ userName }}
+              </span>
+              <svg class="h-4 w-4 text-zinc-400" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z"
+                  clip-rule="evenodd"
+                />
+              </svg>
             </button>
-            <div v-if="showProfileMenu" class="absolute right-0 mt-3 w-40 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 shadow-2xl py-1 z-50">
-                <div class="px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-100 dark:border-gray-800 mb-1">{{ userName }}</div>
-                <router-link to="/profile" class="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800">Profile</router-link>
-                <router-link v-if="isAdmin" to="/write" class="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800">New Post</router-link>
-                <button @click="logout" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-800">Log out</button>
+
+            <div
+              v-if="showProfileMenu"
+              class="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg
+                     dark:border-zinc-800 dark:bg-zinc-950"
+            >
+              <div class="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
+                <p class="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">{{ userName }}</p>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400">Account</p>
+              </div>
+
+              <router-link to="/profile" class="menu-item">个人资料</router-link>
+              <router-link to="/my-comments" class="menu-item">我的评论</router-link>
+
+              <router-link v-if="isAdmin" to="/write" class="menu-item">写文章</router-link>
+              <router-link v-if="isAdmin" to="/admin" class="menu-item">管理后台</router-link>
+
+              <button @click="logout" class="menu-item w-full text-left text-red-600 dark:text-red-400">
+                退出登录
+              </button>
             </div>
           </div>
-          
-          <div v-else class="flex items-center gap-3 text-sm font-medium">
-            <router-link to="/login" class="hover:text-blue-600 transition-colors">Login</router-link>
-            <router-link to="/register" class="bg-black dark:bg-white text-white dark:text-black px-3 py-1 rounded hover:opacity-80 transition-opacity">Join</router-link>
+
+          <div v-else class="flex items-center gap-2">
+            <router-link
+              to="/login"
+              class="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+            >
+              登录
+            </router-link>
+            <router-link
+              to="/register"
+              class="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 shadow-sm
+                     transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-zinc-900"
+            >
+              注册
+            </router-link>
           </div>
         </div>
       </div>
-      
-      <button @click="toggleMobileMenu" class="md:hidden p-2 text-gray-900 dark:text-white">
-        <span class="sr-only">Menu</span>
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+
+      <!-- Mobile toggle -->
+      <button
+        class="md:hidden grid h-10 w-10 place-items-center rounded-full border border-zinc-200 bg-white/60 text-zinc-700
+               transition-colors hover:bg-white dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-200 dark:hover:bg-zinc-900/70"
+        @click="toggleMobileMenu"
+        aria-label="Toggle menu"
+      >
+        <svg v-if="!showMobileMenu" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 18h16"></path>
+        </svg>
+        <svg v-else class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18"></path>
+          <path d="M6 6l12 12"></path>
+        </svg>
       </button>
     </div>
 
-    <div v-if="showMobileMenu" class="md:hidden bg-white dark:bg-[#050505] border-t border-gray-100 dark:border-gray-800">
-      <div class="px-6 py-4 space-y-4">
-        <router-link v-for="link in navLinks" :key="link.path" :to="link.path" class="block text-lg font-serif">{{ link.name }}</router-link>
-        <div v-if="!isLoggedIn" class="pt-4 border-t border-gray-100 dark:border-gray-800 flex gap-4">
-           <router-link to="/login">Login</router-link>
-           <router-link to="/register" class="font-bold">Register</router-link>
+    <!-- Mobile panel -->
+    <div
+      v-if="showMobileMenu"
+      class="md:hidden border-t border-zinc-200/70 bg-white/90 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90"
+    >
+      <div class="mx-auto max-w-6xl px-6 py-4 space-y-4">
+        <SearchBar />
+
+        <div class="flex flex-col gap-1">
+          <router-link to="/" :class="mobileLinkClass('/')" @click="closeMobileMenu">首页</router-link>
+          <router-link to="/categories" :class="mobileLinkClass('/categories')" @click="closeMobileMenu">分类</router-link>
+          <router-link to="/tags" :class="mobileLinkClass('/tags')" @click="closeMobileMenu">标签</router-link>
+          <router-link to="/guestbook" :class="mobileLinkClass('/guestbook')" @click="closeMobileMenu">留言板</router-link>
+
+          <router-link v-if="isAdmin" to="/write" :class="mobileLinkClass('/write')" @click="closeMobileMenu">写文章</router-link>
+          <router-link v-if="isAdmin" to="/admin" :class="mobileLinkClass('/admin')" @click="closeMobileMenu">管理后台</router-link>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-zinc-200/70 dark:border-zinc-800/70">
+          <button
+            @click="toggleTheme"
+            class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800
+                   transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          >
+            <span class="text-xs text-zinc-500 dark:text-zinc-400">Theme</span>
+            <span class="font-medium">{{ isDark ? 'Dark' : 'Light' }}</span>
+          </button>
+
+          <div v-if="!isLoggedIn" class="flex items-center gap-3">
+            <router-link to="/login" class="text-sm text-zinc-600 dark:text-zinc-300" @click="closeMobileMenu">登录</router-link>
+            <router-link
+              to="/register"
+              class="text-sm font-medium text-zinc-900 dark:text-zinc-50"
+              @click="closeMobileMenu"
+            >
+              注册
+            </router-link>
+          </div>
+
+          <button
+            v-else
+            @click="logout"
+            class="text-sm font-medium text-red-600 dark:text-red-400"
+          >
+            退出登录
+          </button>
         </div>
       </div>
     </div>
@@ -67,61 +201,172 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import SearchBar from './SearchBar.vue';
 
 const router = useRouter();
+const route = useRoute();
+
 const showMobileMenu = ref(false);
-const showProfileMenu = ref(false); 
-const profileMenuRef = ref(null);   
-const isDark = ref(false);          
+const showProfileMenu = ref(false);
+const profileMenuRef = ref(null);
+const isDark = ref(false);
+
 const isLoggedIn = ref(false);
-const userName = ref('User');
+const userName = ref('用户');
 const userAvatar = ref(null);
 const isAdmin = ref(false);
 
-const navLinks = [
-  { name: 'Index', path: '/' },
-  { name: 'Categories', path: '/categories' }, // Changed '分类' to English for style, change back if needed
-  { name: 'Tags', path: '/tags' },
-  { name: 'Guestbook', path: '/guestbook' },
-];
+const navLinkBase = 'inline-flex items-center rounded-md px-2 py-1.5 text-sm transition-colors';
 
-// Logic same as before...
+const isActive = (path) => {
+  if (path === '/') return route.path === '/';
+  return route.path === path || route.path.startsWith(path + '/');
+};
+
+const linkClass = (path) => {
+  const active = isActive(path);
+  return [
+    navLinkBase,
+    active
+      ? 'text-zinc-900 dark:text-zinc-50'
+      : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50'
+  ].join(' ');
+};
+
+const mobileLinkClass = (path) => {
+  const active = isActive(path);
+  return [
+    'rounded-lg px-3 py-2 text-sm transition-colors',
+    active
+      ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-900/60 dark:text-zinc-50'
+      : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900/60'
+  ].join(' ');
+};
+
 const toggleTheme = () => {
   isDark.value = !isDark.value;
-  document.documentElement.classList.toggle('dark', isDark.value);
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+  if (isDark.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
 };
 
 const checkUserStatus = () => {
   const token = localStorage.getItem('token');
   isLoggedIn.value = !!token;
-  if (isLoggedIn.value) {
-    try {
-      const u = JSON.parse(localStorage.getItem('user'));
-      userName.value = u.username || 'User';
-      userAvatar.value = u.avatar;
-      isAdmin.value = u.isAdmin === true || u.role === 'admin';
-    } catch(e){}
+
+  if (!isLoggedIn.value) {
+    userName.value = '用户';
+    userAvatar.value = null;
+    isAdmin.value = false;
+    return;
+  }
+
+  try {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return;
+
+    const userData = JSON.parse(userStr);
+    userName.value = userData.username || '用户';
+    userAvatar.value = userData.avatar || null;
+    isAdmin.value = userData.isAdmin === true || userData.role === 'admin';
+  } catch (e) {
+    console.error('解析用户数据失败:', e);
+    userName.value = '用户';
+    userAvatar.value = null;
+    isAdmin.value = false;
   }
 };
+
 const logout = () => {
-  localStorage.removeItem('token'); localStorage.removeItem('user');
-  isLoggedIn.value = false; showProfileMenu.value = false; router.push('/');
-};
-const toggleMobileMenu = () => showMobileMenu.value = !showMobileMenu.value;
-const toggleProfileMenu = () => showProfileMenu.value = !showProfileMenu.value;
-const handleClickOutside = (e) => {
-  if (profileMenuRef.value && !profileMenuRef.value.contains(e.target)) showProfileMenu.value = false;
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+
+  isLoggedIn.value = false;
+  userName.value = '用户';
+  userAvatar.value = null;
+  isAdmin.value = false;
+
+  showProfileMenu.value = false;
+  showMobileMenu.value = false;
+  router.push('/');
 };
 
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value;
+};
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false;
+};
+
+const toggleProfileMenu = () => {
+  showProfileMenu.value = !showProfileMenu.value;
+};
+
+const handleClickOutside = (event) => {
+  if (profileMenuRef.value && !profileMenuRef.value.contains(event.target)) {
+    showProfileMenu.value = false;
+  }
+};
+
+const handleStorageChange = (event) => {
+  if (event.key === 'token' || event.key === 'user') {
+    checkUserStatus();
+  }
+};
+
+watch(
+  () => route.fullPath,
+  () => {
+    showProfileMenu.value = false;
+    showMobileMenu.value = false;
+  }
+);
+
 onMounted(() => {
-  isDark.value = localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  document.documentElement.classList.toggle('dark', isDark.value);
+  const savedTheme = localStorage.getItem('theme');
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+    isDark.value = true;
+    document.documentElement.classList.add('dark');
+  } else {
+    isDark.value = false;
+    document.documentElement.classList.remove('dark');
+  }
+
   checkUserStatus();
   document.addEventListener('click', handleClickOutside);
+  window.addEventListener('storage', handleStorageChange);
 });
-onUnmounted(() => document.removeEventListener('click', handleClickOutside));
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+  window.removeEventListener('storage', handleStorageChange);
+});
 </script>
+
+<style scoped>
+.menu-item {
+  display: block;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: rgb(63 63 70);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.menu-item:hover {
+  background: rgb(244 244 245);
+}
+:global(.dark) .menu-item {
+  color: rgb(228 228 231);
+}
+:global(.dark) .menu-item:hover {
+  background: rgba(24, 24, 27, 0.7);
+}
+</style>
